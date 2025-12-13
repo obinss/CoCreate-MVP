@@ -46,6 +46,18 @@ php -S localhost:8000
 
 Install the "Live Server" extension and click "Go Live" in VS Code.
 
+### Option 4: GitHub Pages (For Team Review)
+
+**Perfect for sharing with your team!**
+
+1. Go to your GitHub repository → **Settings** → **Pages**
+2. Under "Source", select **Deploy from a branch**
+3. Choose **main** branch and **/ (root)** folder
+4. Click **Save**
+5. Your site will be live at: `https://[username].github.io/[repo-name]/`
+
+GitHub Pages automatically rebuilds when you push changes to the main branch!
+
 ## Demo Accounts
 
 Use these credentials to test different user roles:

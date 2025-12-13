@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.log
+
+# Local server artifacts
+requirements.txt
+
+# Keep these for the demo
+# public/
+# src/
