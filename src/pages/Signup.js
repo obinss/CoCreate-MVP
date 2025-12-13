@@ -3,6 +3,52 @@
    ============================================ */
 
 function renderSignupPage() {
+    // Set up the signup handler globally
+    setTimeout(() => {
+        const form = document.getElementById('signup-form');
+        if (form) {
+            form.onsubmit = function (event) {
+                event.preventDefault();
+
+                const name = document.getElementById('signup-name').value;
+                const email = document.getElementById('signup-email').value;
+                const password = document.getElementById('signup-password').value;
+                const wantsToSell = document.getElementById('wants-to-sell').checked;
+
+                // Check if email already exists
+                const existingUser = USERS.find(u => u.email === email);
+                if (existingUser) {
+                    showNotification('Email already registered', 'error');
+                    return;
+                }
+
+                // Mock signup - create new user
+                const newUser = {
+                    id: 'user_' + Date.now(),
+                    email,
+                    name,
+                    role: 'buyer', // All start as buyers
+                    isSeller: wantsToSell,
+                    verificationStatus: wantsToSell ? 'pending' : null,
+                    isVerified: false,
+                    createdAt: new Date().toISOString()
+                };
+
+                USERS.push(newUser);
+                AppState.currentUser = newUser;
+                saveToLocalStorage('currentUser', newUser);
+
+                showNotification('Account created successfully!', 'success');
+
+                if (wantsToSell) {
+                    showNotification('Seller verification pending. You can browse while waiting for approval.', 'info');
+                }
+
+                setTimeout(() => navigate('browse'), 1000);
+            };
+        }
+    }, 100);
+
     return `
         <div class="container section">
             <div style="max-width: 600px; margin: 0 auto;">
@@ -12,7 +58,7 @@ function renderSignupPage() {
                         Start buying or selling construction materials today
                     </p>
 
-                    <form id="signup-form" onsubmit="handleSignup(event)">
+                    <form id="signup-form">
                         <div class="input-group">
                             <label class="input-label">Full Name</label>
                             <input type="text" class="input" id="signup-name" 
@@ -32,26 +78,14 @@ function renderSignupPage() {
                         </div>
 
                         <div class="input-group">
-                            <label class="input-label">I want to:</label>
-                            <div>
-                                <div class="radio-group">
-                                    <input type="radio" class="radio" name="role" value="buyer" id="role-buyer" checked />
-                                    <label for="role-buyer" style="cursor: pointer;">
-                                        <strong>Buy Materials</strong>
-                                        <span class="text-sm text-tertiary" style="display: block; margin-left: 26px;">
-                                            I'm looking for affordable construction materials
-                                        </span>
-                                    </label>
-                                </div>
-                                <div class="radio-group">
-                                    <input type="radio" class="radio" name="role" value="seller" id="role-seller" />
-                                    <label for="role-seller" style="cursor: pointer;">
-                                        <strong>Sell Materials</strong>
-                                        <span class="text-sm text-tertiary" stylespan="display: block; margin-left: 26px;">
-                                            I have excess materials from construction projects
-                                        </span>
-                                    </label>
-                                </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" class="checkbox" id="wants-to-sell" />
+                                <label for="wants-to-sell" style="cursor: pointer;">
+                                    <strong>I also want to sell materials</strong>
+                                    <span class="text-sm text-tertiary" style="display: block; margin-left: 26px;">
+                                        Your account will be pending admin approval to sell
+                                    </span>
+                                </label>
                             </div>
                         </div>
 
@@ -79,39 +113,5 @@ function renderSignupPage() {
                 </div>
             </div>
         </div>
-
-        <script>
-            function handleSignup(event) {
-                event.preventDefault();
-                
-                const name = document.getElementById('signup-name').value;
-                const email = document.getElementById('signup-email').value;
-                const password = document.getElementById('signup-password').value;
-                const role = document.querySelector('input[name="role"]:checked').value;
-
-                // Mock signup - create new user
-                const newUser = {
-                    id: 'user_' + Date.now(),
-                    email,
-                    name,
-                    role,
-                    isVerified: false,
-                    createdAt: new Date().toISOString()
-                };
-
-                USERS.push(newUser);
-                AppState.currentUser = newUser;
-                saveToLocalStorage('currentUser', newUser);
-
-                showNotification('Account created successfully!', 'success');
-                
-                if (role === 'seller') {
-                    showNotification('Redirecting to seller verification...', 'info');
-                    setTimeout(() => navigate('seller-verification'), 1500);
-                } else {
-                    setTimeout(() => navigate('browse'), 1000);
-                }
-            }
-        </script>
     `;
 }

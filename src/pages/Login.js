@@ -3,6 +3,36 @@
    ============================================ */
 
 function renderLoginPage() {
+    // Set up the login handler globally
+    setTimeout(() => {
+        const form = document.getElementById('login-form');
+        if (form) {
+            form.onsubmit = function (event) {
+                event.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+
+                const result = login(email, password);
+
+                if (result.success) {
+                    showNotification('Login successful! Welcome back.', 'success');
+                    setTimeout(() => {
+                        const user = result.user;
+                        if (user.role === 'admin') {
+                            navigate('admin-dashboard');
+                        } else if (user.role === 'seller' || (user.isSeller && user.verificationStatus === 'approved')) {
+                            navigate('seller-dashboard');
+                        } else {
+                            navigate('browse');
+                        }
+                    }, 500);
+                } else {
+                    showNotification('Invalid email or password', 'error');
+                }
+            };
+        }
+    }, 100);
+
     return `
         <div class="container section">
             <div style="max-width: 480px; margin: 0 auto;">
@@ -12,7 +42,7 @@ function renderLoginPage() {
                         Log in to continue to CoCreate
                     </p>
 
-                    <form id="login-form" onsubmit="handleLogin(event)">
+                    <form id="login-form">
                         <div class="input-group">
                             <label class="input-label">Email Address</label>
                             <input type="email" class="input" id="login-email" 
@@ -49,30 +79,12 @@ function renderLoginPage() {
                         <small>
                             Buyer: john.buyer@example.com<br/>
                             Seller: maria.contractor@example.com<br/>
+                            Admin: admin@cocreate.com<br/>
                             Password: (any password works)
                         </small>
                     </div>
                 </div>
             </div>
         </div>
-
-        <script>
-            function handleLogin(event) {
-                event.preventDefault();
-                const email = document.getElementById('login-email').value;
-                const password = document.getElementById('login-password').value;
-
-                const result = login(email, password);
-                
-                if (result.success) {
-                    showNotification('Login successful! Welcome back.', 'success');
-                    setTimeout(() => {
-                        navigate(result.user.role === 'seller' ? 'seller-dashboard' : 'browse');
-                    }, 1000);
-                } else {
-                    showNotification('Invalid email or password', 'error');
-                }
-            }
-        </script>
     `;
 }

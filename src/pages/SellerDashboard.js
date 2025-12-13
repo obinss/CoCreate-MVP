@@ -6,18 +6,22 @@ function renderSellerDashboardPage() {
     if (!requireAuth()) return '';
 
     const user = AppState.currentUser;
-    if (user.role !== 'seller') {
+
+    // Check if user has seller privileges and is approved
+    if (!user.isSeller || user.verificationStatus !== 'approved') {
         return `
-            <div class="container section">
-                <div class="card text-center" style="padding: 64px;">
-                    <h2>Seller Access Required</h2>
-                    <p>You need a seller account to access this page</p>
-                    <button class="btn btn-primary mt-4" onclick="navigate('seller-verification')">
-                        Become a Seller
-                    </button>
-                </div>
-            </div>
-        `;
+    < div class="container section" >
+        <div class="card text-center" style="padding: 64px;">
+            <h2>${user.isSeller && user.verificationStatus === 'pending' ? 'Verification Pending' : 'Seller Access Required'}</h2>
+            <p>${user.isSeller && user.verificationStatus === 'pending'
+                ? 'Your seller application is pending admin approval. You can continue browsing while you wait.'
+                : 'You need seller privileges to access this page. Apply to become a seller from your profile.'}</p>
+            <button class="btn btn-primary mt-4" onclick="navigate('browse')">
+                Browse Materials
+            </button>
+        </div>
+            </div >
+    `;
     }
 
     const sellerProducts = getProductsBySeller(user.id);
@@ -26,7 +30,7 @@ function renderSellerDashboardPage() {
     const totalRevenue = 850.50; // Mock data
 
     return `
-        <div class="container section">
+    < div class="container section" >
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
                 <h1>Seller Dashboard</h1>
                 <button class="btn btn-primary" onclick="navigate('add-product')">
@@ -34,7 +38,7 @@ function renderSellerDashboardPage() {
                 </button>
             </div>
 
-            <!-- Stats Overview -->
+            <!--Stats Overview-- >
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style="gap: 16px; margin-bottom: 32px;">
                 <div class="card">
                     <div class="text-sm text-tertiary">Active Listings</div>
@@ -56,7 +60,7 @@ function renderSellerDashboardPage() {
                 </div>
             </div>
 
-            <!-- Tabs -->
+            <!--Tabs -->
             <div class="tabs">
                 <button class="tab active" onclick="switchSellerTab('inventory')">
                     Inventory
@@ -72,49 +76,49 @@ function renderSellerDashboardPage() {
             <div id="seller-content">
                 ${renderInventoryTab(sellerProducts)}
             </div>
-        </div>
+        </div >
 
-        <script>
-            function switchSellerTab(tab) {
+    <script>
+        function switchSellerTab(tab) {
                 const tabs = document.querySelectorAll('.tab');
                 tabs.forEach(t => t.classList.remove('active'));
-                event.target.classList.add('active');
+        event.target.classList.add('active');
 
-                const content = document.getElementById('seller-content');
-                const products = ${JSON.stringify(sellerProducts)};
-                
-                switch(tab) {
+        const content = document.getElementById('seller-content');
+        const products = ${JSON.stringify(sellerProducts)};
+
+        switch(tab) {
                     case 'inventory':
-                        content.innerHTML = renderInventoryTab(products);
-                        break;
-                    case 'orders':
-                        content.innerHTML = renderSellerOrdersTab();
-                        break;
-                    case 'analytics':
-                        content.innerHTML = renderAnalyticsTab();
-                        break;
+        content.innerHTML = renderInventoryTab(products);
+        break;
+        case 'orders':
+        content.innerHTML = renderSellerOrdersTab();
+        break;
+        case 'analytics':
+        content.innerHTML = renderAnalyticsTab();
+        break;
                 }
             }
-        </script>
-    `;
+    </script>
+`;
 }
 
 function renderInventoryTab(products) {
     if (products.length === 0) {
         return `
-            <div class="card text-center" style="padding: 64px;">
+    < div class="card text-center" style = "padding: 64px;" >
                 <h3>No products listed yet</h3>
                 <p>Add your first product to start selling</p>
                 <button class="btn btn-primary mt-4" onclick="navigate('add-product')">
                     Add Product
                 </button>
-            </div>
-        `;
+            </div >
+    `;
     }
 
     return `
-        <div class="grid grid-cols-1" style="gap: 16px;">
-            ${products.map(product => {
+    < div class="grid grid-cols-1" style = "gap: 16px;" >
+        ${products.map(product => {
         const statusBadge = {
             'active': { label: 'Active', color: 'success' },
             'sold': { label: 'Sold', color: 'info' },
@@ -165,23 +169,24 @@ function renderInventoryTab(products) {
                         </div>
                     </div>
                 `;
-    }).join('')}
-        </div>
+    }).join('')
+        }
+        </div >
     `;
 }
 
 function renderSellerOrdersTab() {
     return `
-        <div class="card text-center" style="padding: 64px;">
+    < div class="card text-center" style = "padding: 64px;" >
             <h3>Orders</h3>
             <p>View and manage your orders here</p>
-        </div>
+        </div >
     `;
 }
 
 function renderAnalyticsTab() {
     return `
-        <div class="grid grid-cols-1 lg:grid-cols-2" style="gap: 24px;">
+    < div class="grid grid-cols-1 lg:grid-cols-2" style = "gap: 24px;" >
             <div class="card">
                 <h3>Revenue Trend</h3>
                 <div style="height: 300px; display: flex; align-items: center; justify-content: center; background: var(--color-background); border-radius: var(--radius-md);">
@@ -194,6 +199,6 @@ function renderAnalyticsTab() {
                     <p class="text-tertiary">Product performance metrics</p>
                 </div>
             </div>
-        </div>
+        </div >
     `;
 }
