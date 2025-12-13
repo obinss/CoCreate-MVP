@@ -10,18 +10,18 @@ function renderSellerDashboardPage() {
     // Check if user has seller privileges and is approved
     if (!user.isSeller || user.verificationStatus !== 'approved') {
         return `
-    < div class="container section" >
-        <div class="card text-center" style="padding: 64px;">
-            <h2>${user.isSeller && user.verificationStatus === 'pending' ? 'Verification Pending' : 'Seller Access Required'}</h2>
-            <p>${user.isSeller && user.verificationStatus === 'pending'
+        \u003cdiv class="container section"\u003e
+            \u003cdiv class="card text-center" style="padding: 64px;"\u003e
+                \u003ch2\u003e${user.isSeller && user.verificationStatus === 'pending' ? 'Verification Pending' : 'Seller Access Required'}\u003c/h2\u003e
+                \u003cp\u003e${user.isSeller && user.verificationStatus === 'pending'
                 ? 'Your seller application is pending admin approval. You can continue browsing while you wait.'
-                : 'You need seller privileges to access this page. Apply to become a seller from your profile.'}</p>
-            <button class="btn btn-primary mt-4" onclick="navigate('browse')">
-                Browse Materials
-            </button>
-        </div>
-            </div >
-    `;
+                : 'You need seller privileges to access this page. Apply to become a seller from your profile.'}\u003c/p\u003e
+                \u003cbutton class="btn btn-primary mt-4" onclick="navigate('browse')"\u003e
+                    Browse Materials
+                \u003c/button\u003e
+            \u003c/div\u003e
+        \u003c/div\u003e
+        `;
     }
 
     const sellerProducts = getProductsBySeller(user.id);
@@ -30,16 +30,16 @@ function renderSellerDashboardPage() {
     const totalRevenue = 850.50; // Mock data
 
     return `
-    < div class="container section" >
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
-                <h1>Seller Dashboard</h1>
-                <button class="btn btn-primary" onclick="navigate('add-product')">
+        \u003cdiv class="container section"\u003e
+            \u003cdiv style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;"\u003e
+                \u003ch1\u003eSeller Dashboard\u003c/h1\u003e
+                \u003cbutton class="btn btn-primary" onclick="navigate('add-product')"\u003e
                     + Add New Listing
-                </button>
-            </div>
+                \u003c/button\u003e
+            \u003c/div\u003e
 
-            <!--Stats Overview-- >
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style="gap: 16px; margin-bottom: 32px;">
+            \u003c!-- Stats Overview --\u003e
+            \u003cdiv class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4" style="gap: 16px; margin-bottom: 32px;"\u003e
                 <div class="card">
                     <div class="text-sm text-tertiary">Active Listings</div>
                     <div class="text-3xl font-bold" style="color: var(--color-primary);">${activeProducts.length}</div>
@@ -60,7 +60,7 @@ function renderSellerDashboardPage() {
                 </div>
             </div>
 
-            <!--Tabs -->
+            <!-- Tabs -->
             <div class="tabs">
                 <button class="tab active" onclick="switchSellerTab('inventory')">
                     Inventory
@@ -76,7 +76,7 @@ function renderSellerDashboardPage() {
             <div id="seller-content">
                 ${renderInventoryTab(sellerProducts)}
             </div>
-        </div >
+        </div>
 
     <script>
         function switchSellerTab(tab) {
@@ -106,18 +106,18 @@ function renderSellerDashboardPage() {
 function renderInventoryTab(products) {
     if (products.length === 0) {
         return `
-    < div class="card text-center" style = "padding: 64px;" >
+            <div class="card text-center" style="padding: 64px;">
                 <h3>No products listed yet</h3>
                 <p>Add your first product to start selling</p>
                 <button class="btn btn-primary mt-4" onclick="navigate('add-product')">
                     Add Product
                 </button>
-            </div >
+            </div>
     `;
     }
 
     return `
-    < div class="grid grid-cols-1" style = "gap: 16px;" >
+        <div class="grid grid-cols-1" style="gap: 16px;">
         ${products.map(product => {
         const statusBadge = {
             'active': { label: 'Active', color: 'success' },
@@ -169,24 +169,23 @@ function renderInventoryTab(products) {
                         </div>
                     </div>
                 `;
-    }).join('')
-        }
-        </div >
+    }).join('')}
+        </div>
     `;
 }
 
 function renderSellerOrdersTab() {
     return `
-    < div class="card text-center" style = "padding: 64px;" >
+        <div class="card text-center" style="padding: 64px;">
             <h3>Orders</h3>
             <p>View and manage your orders here</p>
-        </div >
+        </div>
     `;
 }
 
 function renderAnalyticsTab() {
     return `
-    < div class="grid grid-cols-1 lg:grid-cols-2" style = "gap: 24px;" >
+        <div class="grid grid-cols-1 lg:grid-cols-2" style="gap: 24px;">
             <div class="card">
                 <h3>Revenue Trend</h3>
                 <div style="height: 300px; display: flex; align-items: center; justify-content: center; background: var(--color-background); border-radius: var(--radius-md);">
@@ -199,6 +198,6 @@ function renderAnalyticsTab() {
                     <p class="text-tertiary">Product performance metrics</p>
                 </div>
             </div>
-        </div >
+        </div>
     `;
 }

@@ -44,31 +44,31 @@ function renderNavbar() {
                             Browse
                         </a>
                     </li>
-                    ${isAuth && user.role === 'seller' ? `
-                        <li>
-                            <a href="#" class="navbar-link ${window.currentPage === 'seller-dashboard' ? 'active' : ''}" 
-                               onclick="navigate('seller-dashboard'); return false;">
-                                Dashboard
-                            </a>
-                        </li>
-                    ` : ''}
-                    ${isAuth && user.role === 'admin' ? `
-                        <li>
-                            <a href="#" class="navbar-link ${window.currentPage === 'admin-dashboard' ? 'active' : ''}" 
-                               onclick="navigate('admin-dashboard'); return false;">
-                                Admin
-                            </a>
-                        </li>
-                    ` : ''}
-                    ${isAuth && user.role === 'buyer' ? `
-                        <li>
-                            <a href="#" class="navbar-link ${window.currentPage === 'buyer-dashboard' ? 'active' : ''}" 
-                               onclick="navigate('buyer-dashboard'); return false;">
-                                My Orders
-                            </a>
-                        </li>
-                    ` : ''}
                     ${isAuth ? `
+                        ${user.role === 'buyer' || user.role === 'seller' || user.role === 'admin' ? `
+                            <li>
+                                <a href="#" class="navbar-link ${window.currentPage === 'buyer-dashboard' ? 'active' : ''}" 
+                                   onclick="navigate('buyer-dashboard'); return false;">
+                                    My Orders
+                                </a>
+                            </li>
+                        ` : ''}
+                        ${(user.role === 'seller' || (user.isSeller && user.verificationStatus === 'approved')) || user.role === 'admin' ? `
+                            <li>
+                                <a href="#" class="navbar-link ${window.currentPage === 'seller-dashboard' ? 'active' : ''}" 
+                                   onclick="navigate('seller-dashboard'); return false;">
+                                    ${user.role === 'admin' ? 'Seller View' : 'Dashboard'}
+                                </a>
+                            </li>
+                        ` : ''}
+                        ${user.role === 'admin' ? `
+                            <li>
+                                <a href="#" class="navbar-link ${window.currentPage === 'admin-dashboard' ? 'active' : ''}" 
+                                   onclick="navigate('admin-dashboard'); return false;">
+                                    Admin
+                                </a>
+                            </li>
+                        ` : ''}
                         <li>
                             <a href="#" class="navbar-link ${window.currentPage === 'messages' ? 'active' : ''}" 
                                onclick="navigate('messages'); return false;">
@@ -93,20 +93,24 @@ function renderNavbar() {
                                 </span>
                             </a>
                         </li>
-                        <li>
-                            <div class="dropdown">
-                                <button class="btn btn-ghost" onclick="toggleUserMenu()">
-                                    ${user.name}
-                                </button>
-                                <div class="dropdown-menu hidden" id="user-menu">
-                                    <a href="#" class="dropdown-item" onclick="navigate('profile'); return false;">
-                                        Profile
+                        <li style="position: relative;">
+                            <button class="btn btn-ghost" onclick="toggleUserMenu(); return false;" style="white-space: nowrap;">
+                                ${user.name}
+                            </button>
+                            <div class="dropdown-menu" id="user-menu" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 8px; min-width: 200px; background: white; border-radius: var(--radius-md); box-shadow: 0 8px 24px rgba(0,0,0,0.15); z-index: 1000; padding: 8px 0;">
+                                <a href="#" class="dropdown-item" onclick="navigate('profile'); return false;" style="display: block; padding: 12px 16px; color: var(--color-text); text-decoration: none; transition: background 0.2s;">
+                                    Profile
+                                </a>
+                                ${user.role === 'buyer' && !user.isSeller ? `
+                                    <div class="dropdown-divider" style="height: 1px; background: var(--color-background); margin: 8px 0;"></div>
+                                    <a href="#" class="dropdown-item" onclick="navigate('seller-application'); return false;" style="display: block; padding: 12px 16px; color: var(--color-primary); text-decoration: none; font-weight: 600; transition: background 0.2s;">
+                                        Request Seller Verification
                                     </a>
-                                    <div class="dropdown-divider"></div>
-                                    <a href="#" class="dropdown-item" onclick="logout(); return false;">
-                                        Logout
-                                    </a>
-                                </div>
+                                ` : ''}
+                                <div class="dropdown-divider" style="height: 1px; background: var(--color-background); margin: 8px 0;"></div>
+                                <a href="#" class="dropdown-item" onclick="logout(); return false;" style="display: block; padding: 12px 16px; color: var(--color-text); text-decoration: none; transition: background 0.2s;">
+                                    Logout
+                                </a>
                             </div>
                         </li>
                     ` : `
@@ -139,7 +143,12 @@ function toggleMobileMenu() {
 function toggleUserMenu() {
     const menu = document.getElementById('user-menu');
     if (menu) {
-        menu.classList.toggle('hidden');
+        // Toggle between display none and block
+        if (menu.style.display === 'none' || menu.style.display === '') {
+            menu.style.display = 'block';
+        } else {
+            menu.style.display = 'none';
+        }
     }
 }
 
@@ -153,8 +162,8 @@ function handleNavbarSearch(event) {
 
 // Close dropdowns when clicking outside
 document.addEventListener('click', function (event) {
-    if (!event.target.closest('.dropdown')) {
-        const dropdowns = document.querySelectorAll('.dropdown-menu');
-        dropdowns.forEach(dropdown => dropdown.classList.add('hidden'));
+    const userMenu = document.getElementById('user-menu');
+    if (userMenu && !event.target.closest('li[style*="position: relative"]') && !event.target.closest('#user-menu')) {
+        userMenu.style.display = 'none';
     }
 });

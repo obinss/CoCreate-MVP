@@ -85,6 +85,11 @@ function requireAuth() {
 function filterProducts(filters = {}) {
     let filtered = [...PRODUCTS];
 
+    // Filter out own products if user is logged in
+    if (AppState.currentUser) {
+        filtered = filtered.filter(p => p.sellerId !== AppState.currentUser.id);
+    }
+
     if (filters.category && filters.category !== 'all') {
         filtered = filtered.filter(p => p.category === filters.category);
     }

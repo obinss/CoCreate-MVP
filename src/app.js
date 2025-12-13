@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeAppState();
     updateCartBadge();
     renderCurrentPage();
+
+    // Show onboarding for first-time visitors
+    if (typeof OnboardingFlow !== 'undefined') {
+        OnboardingFlow.show();
+    }
 });
 
 // Main render function
@@ -50,10 +55,16 @@ function renderCurrentPage() {
             content = renderSignupPage();
             break;
         case 'buyer-dashboard':
+            requireAuth();
             content = renderBuyerDashboardPage();
             break;
         case 'seller-dashboard':
+            requireAuth();
             content = renderSellerDashboardPage();
+            break;
+        case 'seller-application':
+            requireAuth();
+            content = renderSellerApplicationPage();
             break;
         case 'admin-dashboard':
             content = renderAdminDashboardPage();

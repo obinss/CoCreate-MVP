@@ -23,7 +23,12 @@ const USERS = [
         isVerified: true,
         verificationStatus: null,
         avatar: null,
-        createdAt: '2024-01-15'
+        createdAt: '2024-01-15',
+        projects: [
+            { id: 'proj_1', name: 'Kitchen Renovation', description: 'Full remodel of kitchen in Apt 4B', budget: 15000, status: 'active', createdAt: '2024-11-01' },
+            { id: 'proj_2', name: 'Backyard Deck', description: 'New 20sqm deck with composite materials', budget: 5000, status: 'planning', createdAt: '2024-12-05' }
+        ],
+        watchlist: ['prod_2', 'prod_5', 'prod_8']
     },
     {
         id: 'user_2',
@@ -65,6 +70,22 @@ const USERS = [
         defaultPickupAddress: 'Hauptstraße 12, 10117 Berlin',
         avatar: null,
         createdAt: '2024-12-10'
+    },
+    {
+        id: 'user_5',
+        email: 'hans.electric@example.com',
+        name: 'Hans Weber',
+        role: 'seller',
+        isSeller: true,
+        isVerified: true,
+        businessName: 'Weber Elektro',
+        taxId: 'DE555666777',
+        verificationStatus: 'approved',
+        defaultPickupAddress: 'Stromweg 88, 80331 Munich',
+        rating: 4.9,
+        totalSales: 45,
+        avatar: null,
+        createdAt: '2023-08-20'
     }
 ];
 
@@ -113,21 +134,16 @@ const PRODUCTS = [
     {
         id: 'prod_2',
         sellerId: 'user_2',
-        title: 'Industrial Steel I-Beams 6m',
-        description: 'Heavy-duty steel I-beams, 200mm height. Surplus from commercial construction. Excellent for structural supports.',
-        category: 'Metal',
+        title: 'Copper Piping - 15mm (Unused)',
+        description: 'Surplus copper pipes, 15mm diameter. Stored indoors, excellent condition. 20 lengths of 3m each.',
+        category: 'Plumbing',
         condition: 'new',
-        quantity: 12,
-        unitOfMeasure: 'count',
-        price: 180.00,
-        marketPrice: 320.00,
-        weightPerUnit: 156.0,
-        dimensions: '6000x200x100mm',
-        locationLat: 52.5200,
-        locationLong: 13.4050,
+        quantity: 60,
+        unitOfMeasure: 'linear_meter',
+        price: 8.50,
+        marketPrice: 12.00,
         locationName: 'Berlin',
         status: 'active',
-        images: ['steel-beams.jpg'],
         createdAt: '2024-12-05',
         views: 156,
         saves: 12
@@ -135,266 +151,138 @@ const PRODUCTS = [
     {
         id: 'prod_3',
         sellerId: 'user_2',
-        title: 'Rockwool Insulation Panels 100mm',
-        description: 'Mineral wool insulation panels, fire-rated A1. Leftover from office building project. Unopened packages.',
+        title: 'Rockwool Insulation Rolls',
+        description: 'Excess Rockwool thermal insulation. 100mm thickness. 12 rolls available. Packaging slightly dusty but seals intact.',
         category: 'Insulation',
         condition: 'opened_unused',
-        quantity: 120,
-        unitOfMeasure: 'sqm',
-        price: 8.50,
-        marketPrice: 18.00,
-        weightPerUnit: 3.5,
-        dimensions: '1200x600x100mm',
-        locationLat: 52.5200,
-        locationLong: 13.4050,
-        locationName: 'Berlin',
+        quantity: 12,
+        unitOfMeasure: 'count',
+        price: 25.00,
+        marketPrice: 45.00,
+        locationName: 'Potsdam',
         status: 'active',
-        images: ['insulation.jpg'],
         createdAt: '2024-12-08',
         views: 89,
-        saves: 15
+        saves: 5
     },
     {
         id: 'prod_4',
-        sellerId: 'user_2',
-        title: 'Ceramic Floor Tiles - Anthracite',
-        description: 'Large format porcelain tiles, anthracite grey. Modern matte finish. Leftover from bathroom renovation, 8 boxes.',
-        category: 'Flooring',
+        sellerId: 'user_5',
+        title: 'Schneider Electric Circuit Breakers',
+        description: 'Box of 10 Schneider Electric Acti9 iC60N MCBs. 16A, C-curve. Brand new in box.',
+        category: 'Electrical',
         condition: 'new',
-        quantity: 15,
-        unitOfMeasure: 'sqm',
-        price: 22.00,
-        marketPrice: 45.00,
-        weightPerUnit: 22.0,
-        dimensions: '600x600x10mm',
-        locationLat: 52.5200,
-        locationLong: 13.4050,
-        locationName: 'Berlin',
+        quantity: 10,
+        unitOfMeasure: 'count',
+        price: 12.00,
+        marketPrice: 22.50,
+        locationName: 'Munich',
         status: 'active',
-        images: ['tiles.jpg'],
         createdAt: '2024-12-10',
-        views: 234,
-        saves: 31
+        views: 210,
+        saves: 45
     },
     {
         id: 'prod_5',
-        sellerId: 'user_2',
-        title: 'Copper Piping 22mm - 50m Roll',
-        description: 'Professional grade copper piping for plumbing. Partial roll from hotel renovation. Never used.',
-        category: 'Plumbing',
-        condition: 'new',
-        quantity: 50,
+        sellerId: 'user_5',
+        title: 'Heavy Duty Power Cable 5x2.5mm²',
+        description: 'NYM-J installation cable. Remainder of large drum. Approx 85 meters left.',
+        category: 'Electrical',
+        condition: 'cut_undamaged',
+        quantity: 85,
         unitOfMeasure: 'linear_meter',
-        price: 4.80,
-        marketPrice: 9.50,
-        weightPerUnit: 0.8,
-        dimensions: '22mm diameter',
-        locationLat: 52.5200,
-        locationLong: 13.4050,
-        locationName: 'Berlin',
+        price: 1.50,
+        marketPrice: 2.80,
+        locationName: 'Munich',
         status: 'active',
-        images: ['copper-pipe.jpg'],
-        createdAt: '2024-12-03',
-        views: 178,
-        saves: 22
+        createdAt: '2024-12-11',
+        views: 67,
+        saves: 8
     },
     {
         id: 'prod_6',
         sellerId: 'user_2',
-        title: 'Exterior White Paint - Premium',
-        description: 'High-quality exterior facade paint, brilliant white. UV resistant, 15L buckets. 8 buckets available.',
-        category: 'Paint & Coating',
+        title: 'Ceramic Wall Tiles - Gloss White',
+        description: 'Classic white subway tiles (10x20cm). 5 boxes left over. Approx 5 sqm total.',
+        category: 'Flooring',
         condition: 'new',
-        quantity: 120,
-        unitOfMeasure: 'count',
-        price: 45.00,
-        marketPrice: 85.00,
-        weightPerUnit: 18.0,
-        dimensions: '15L bucket',
-        locationLat: 52.5200,
-        locationLong: 13.4050,
+        quantity: 5,
+        unitOfMeasure: 'sqm',
+        price: 15.00,
+        marketPrice: 32.00,
         locationName: 'Berlin',
         status: 'active',
-        images: ['paint.jpg'],
-        createdAt: '2024-12-06',
-        views: 142,
-        saves: 18
+        createdAt: '2024-11-25',
+        views: 112,
+        saves: 15
     },
     {
         id: 'prod_7',
         sellerId: 'user_2',
-        title: 'Laminate Flooring - Oak Effect',
-        description: 'AC4 rated laminate flooring with oak wood effect. 8mm thickness. From office renovation, 12 packages. Some packages opened but planks unused.',
-        category: 'Flooring',
-        condition: 'opened_unused',
-        quantity: 35,
-        unitOfMeasure: 'sqm',
-        price: 12.50,
-        marketPrice: 28.00,
-        weightPerUnit: 8.5,
-        dimensions: '1380x193x8mm',
-        locationLat: 52.5200,
-        locationLong: 13.4050,
-        locationName: 'Berlin',
+        title: 'Steel I-Beams (HEB 140)',
+        description: 'Two steel beams, HEB 140, 4.5m length each. Primed red oxide. Leftover from structural reinforcement.',
+        category: 'Metal',
+        condition: 'new',
+        quantity: 2,
+        unitOfMeasure: 'count',
+        price: 200.00,
+        marketPrice: 450.00,
+        locationName: 'Hamburg',
         status: 'active',
-        images: ['laminate-oak.jpg'],
-        createdAt: '2024-12-09',
-        views: 198,
-        saves: 24
+        createdAt: '2024-11-20',
+        views: 34,
+        saves: 3
     },
     {
         id: 'prod_8',
-        sellerId: 'user_2',
-        title: 'Vinyl Plank Flooring - Waterproof',
-        description: 'Click-system vinyl planks, waterproof SPC core. Grey oak design. Leftover from bathroom project, perfect for wet areas.',
-        category: 'Flooring',
-        condition: 'new',
-        quantity: 28,
-        unitOfMeasure: 'sqm',
+        sellerId: 'user_5',
+        title: 'LED Panel Lights 60x60cm',
+        description: 'Office ceiling LED panels. 4000K neutral white. 6 pieces available. Boxes opened to check contents but never installed.',
+        category: 'Electrical',
+        condition: 'opened_unused',
+        quantity: 6,
+        unitOfMeasure: 'count',
         price: 18.00,
-        marketPrice: 42.00,
-        weightPerUnit: 9.2,
-        dimensions: '1220x180x5mm',
-        locationLat: 52.5200,
-        locationLong: 13.4050,
-        locationName: 'Berlin',
+        marketPrice: 40.00,
+        locationName: 'Munich',
         status: 'active',
-        images: ['vinyl-plank.jpg'],
-        createdAt: '2024-12-11',
-        views: 267,
-        saves: 35
+        createdAt: '2024-12-01',
+        views: 145,
+        saves: 22
     },
     {
         id: 'prod_9',
         sellerId: 'user_2',
-        title: 'Bamboo Flooring - Natural Color',
-        description: 'Sustainable bamboo hardwood flooring. Some planks were cut to shape but never used. Excellent eco-friendly option.',
-        category: 'Flooring',
-        condition: 'cut_undamaged',
-        quantity: 22,
-        unitOfMeasure: 'sqm',
-        price: 25.00,
-        marketPrice: 55.00,
-        weightPerUnit: 11.0,
-        dimensions: '960x96x14mm',
-        locationLat: 52.5200,
-        locationLong: 13.4050,
+        title: 'Exterior Facade Paint - Grey',
+        description: 'High quality silicone resin facade paint. RAL 7016 Anthracite Grey. 2 buckets of 12.5L each.',
+        category: 'Paint & Coating',
+        condition: 'new',
+        quantity: 2,
+        unitOfMeasure: 'count',
+        price: 45.00,
+        marketPrice: 95.00,
         locationName: 'Berlin',
         status: 'active',
-        images: ['bamboo-floor.jpg'],
-        createdAt: '2024-12-07',
-        views: 145,
-        saves: 19
+        createdAt: '2024-12-05',
+        views: 78,
+        saves: 9
     },
     {
         id: 'prod_10',
         sellerId: 'user_2',
-        title: 'Parquet Flooring Herringbone - Walnut',
-        description: 'Premium walnut parquet in herringbone pattern. A few pieces have minor edge chips from storage. Still excellent quality.',
-        category: 'Flooring',
-        condition: 'slightly_damaged',
-        quantity: 18,
-        unitOfMeasure: 'sqm',
-        price: 38.00,
-        marketPrice: 95.00,
-        weightPerUnit: 14.0,
-        dimensions: '600x120x15mm',
-        locationLat: 52.5200,
-        locationLong: 13.4050,
-        locationName: 'Berlin',
-        status: 'active',
-        images: ['parquet-walnut.jpg'],
-        createdAt: '2024-12-04',
-        views: 212,
-        saves: 28
-    },
-    {
-        id: 'prod_11',
-        sellerId: 'user_2',
-        title: 'Cork Flooring Tiles - Natural',
-        description: 'Eco-friendly cork tiles, excellent sound insulation. Opened packages from sustainable building project. Tiles in perfect condition.',
-        category: 'Flooring',
-        condition: 'opened_unused',
-        quantity: 26,
-        unitOfMeasure: 'sqm',
-        price: 20.00,
-        marketPrice: 48.00,
-        weightPerUnit: 6.5,
-        dimensions: '600x300x10mm',
-        locationLat: 52.5200,
-        locationLong: 13.4050,
-        locationName: 'Berlin',
-        status: 'active',
-        images: ['cork-tiles.jpg'],
-        createdAt: '2024-12-08',
-        views: 87,
-        saves: 11
-    },
-    {
-        id: 'prod_12',
-        sellerId: 'user_2',
-        title: 'Engineered Oak Wide Planks',
-        description: 'Extra-wide engineered oak planks, 220mm width. Premium grade. Some planks were cut for door frames. Most planks full length.',
-        category: 'Flooring',
-        condition: 'cut_undamaged',
-        quantity: 31,
-        unitOfMeasure: 'sqm',
-        price: 42.00,
-        marketPrice: 88.00,
-        weightPerUnit: 13.5,
-        dimensions: '2200x220x15mm',
-        locationLat: 52.5200,
-        locationLong: 13.4050,
-        locationName: 'Berlin',
-        status: 'active',
-        images: ['eng-oak-wide.jpg'],
-        createdAt: '2024-12-05',
-        views: 289,
-        saves: 42
-    },
-    {
-        id: 'prod_13',
-        sellerId: 'user_2',
-        title: 'Marble Effect Porcelain Tiles',
-        description: 'Luxury large-format porcelain tiles with Carrara marble effect. A couple tiles have tiny corner chips, rest are perfect.',
-        category: 'Flooring',
-        condition: 'slightly_damaged',
-        quantity: 12,
-        unitOfMeasure: 'sqm',
-        price: 28.00,
-        marketPrice: 72.00,
-        weightPerUnit: 25.0,
-        dimensions: '800x800x10mm',
-        locationLat: 52.5200,
-        locationLong: 13.4050,
-        locationName: 'Berlin',
-        status: 'active',
-        images: ['marble-tiles.jpg'],
-        createdAt: '2024-12-10',
-        views: 178,
-        saves: 23
-    },
-    {
-        id: 'prod_14',
-        sellerId: 'user_2',
-        title: 'Industrial Concrete Effect Tiles',
-        description: 'Modern concrete-look rectified tiles. Perfect for contemporary spaces. Brand new, unopened boxes from warehouse project.',
-        category: 'Flooring',
+        title: 'Roofing Tiles - Clay Red',
+        description: 'Classic clay roofing tiles. Approx 200 pieces. Good for small repairs or shed roofing.',
+        category: 'Roofing',
         condition: 'new',
-        quantity: 42,
-        unitOfMeasure: 'sqm',
-        price: 24.00,
-        marketPrice: 52.00,
-        weightPerUnit: 21.0,
-        dimensions: '600x600x9mm',
-        locationLat: 52.5200,
-        locationLong: 13.4050,
-        locationName: 'Berlin',
+        quantity: 200,
+        unitOfMeasure: 'count',
+        price: 0.80,
+        marketPrice: 1.50,
+        locationName: 'Leipzig',
         status: 'active',
-        images: ['concrete-tiles.jpg'],
-        createdAt: '2024-12-11',
-        views: 156,
-        saves: 20
+        createdAt: '2024-11-15',
+        views: 56,
+        saves: 6
     }
 ];
 
@@ -404,15 +292,102 @@ const ORDERS = [
         id: 'order_1',
         buyerId: 'user_1',
         sellerId: 'user_2',
+        projectId: 'proj_1', // Linked to Kitchen Renovation
         items: [
-            { productId: 'prod_1', quantity: 10, priceAtPurchase: 35.00 }
+            { productId: 'prod_1', quantity: 10, priceAtPurchase: 35.00, title: 'Premium Oak Hardwood Flooring' }
         ],
         totalAmount: 395.00,
         taxAmount: 75.05,
         escrowStatus: 'funds_held',
-        createdAt: '2024-12-12',
+        createdAt: '2024-12-12T10:00:00',
         deliveryMethod: 'carrier',
         deliveryStatus: 'pending'
+    },
+    {
+        id: 'order_2',
+        buyerId: 'user_1',
+        sellerId: 'user_5',
+        projectId: 'proj_1', // Linked to Kitchen Renovation
+        items: [
+            { productId: 'prod_4', quantity: 5, priceAtPurchase: 12.00, title: 'Schneider Electric Circuit Breakers' },
+            { productId: 'prod_5', quantity: 20, priceAtPurchase: 1.50, title: 'Heavy Duty Power Cable' }
+        ],
+        totalAmount: 101.70, // (60 + 30) * 1.13 approx (assuming tax included logic or added)
+        taxAmount: 11.70,
+        escrowStatus: 'released',
+        createdAt: '2024-11-20T14:30:00',
+        deliveryMethod: 'carrier',
+        deliveryStatus: 'delivered'
+    },
+    {
+        id: 'order_3',
+        buyerId: 'user_1',
+        sellerId: 'user_2',
+        projectId: 'proj_2', // Linked to Backyard Deck
+        items: [
+            { productId: 'prod_9', quantity: 1, priceAtPurchase: 45.00, title: 'Exterior Facade Paint - Grey' }
+        ],
+        totalAmount: 53.55,
+        taxAmount: 8.55,
+        escrowStatus: 'funds_held',
+        createdAt: '2024-12-10T09:15:00',
+        deliveryMethod: 'pickup',
+        deliveryStatus: 'ready_for_pickup'
+    },
+    {
+        id: 'order_4',
+        buyerId: 'user_1',
+        sellerId: 'user_5',
+        projectId: null, // No project
+        items: [
+            { productId: 'prod_8', quantity: 2, priceAtPurchase: 18.00, title: 'LED Panel Lights 60x60cm' }
+        ],
+        totalAmount: 42.84,
+        taxAmount: 6.84,
+        escrowStatus: 'disputed',
+        createdAt: '2024-12-05T16:45:00',
+        deliveryMethod: 'carrier',
+        deliveryStatus: 'shipped'
+    }
+];
+
+// Mock Deliveries
+const DELIVERIES = [
+    {
+        id: 'del_1',
+        orderId: 'order_1',
+        carrier: 'DHL Freight',
+        trackingNumber: 'JD0002345678DE',
+        status: 'processing',
+        estimatedDelivery: '2024-12-16',
+        updates: [
+            { status: 'Order Processed', timestamp: '2024-12-12T11:00:00', location: 'Berlin' }
+        ]
+    },
+    {
+        id: 'del_2',
+        orderId: 'order_2',
+        carrier: 'Hermes',
+        trackingNumber: '0987654321',
+        status: 'delivered',
+        deliveredAt: '2024-11-23T14:00:00',
+        updates: [
+            { status: 'Delivered', timestamp: '2024-11-23T14:00:00', location: 'Munich' },
+            { status: 'Out for Delivery', timestamp: '2024-11-23T08:30:00', location: 'Munich' },
+            { status: 'Shipped', timestamp: '2024-11-21T18:00:00', location: 'Berlin' }
+        ]
+    },
+    {
+        id: 'del_3',
+        orderId: 'order_4',
+        carrier: 'DPD',
+        trackingNumber: '155023958291',
+        status: 'in_transit',
+        estimatedDelivery: '2024-12-14',
+        updates: [
+            { status: 'In Transit', timestamp: '2024-12-06T10:00:00', location: 'Nuremberg' },
+            { status: 'Shipped', timestamp: '2024-12-05T19:00:00', location: 'Munich' }
+        ]
     }
 ];
 
@@ -449,6 +424,31 @@ const CONVERSATIONS = [
                 readAt: null
             }
         ]
+    },
+    {
+        id: 'conv_2',
+        productId: 'prod_7',
+        buyerId: 'user_1',
+        sellerId: 'user_2',
+        status: 'active',
+        lastMessage: 'Can you hold them until Tuesday?',
+        lastMessageAt: '2024-11-22T15:00:00',
+        messages: [
+            {
+                id: 'msg_4',
+                senderId: 'user_1',
+                content: 'What is the exact weight of these beams?',
+                sentAt: '2024-11-22T14:00:00',
+                readAt: '2024-11-22T14:10:00'
+            },
+            {
+                id: 'msg_5',
+                senderId: 'user_2',
+                content: 'Roughly 150kg each.',
+                sentAt: '2024-11-22T14:15:00',
+                readAt: '2024-11-22T14:20:00'
+            }
+        ]
     }
 ];
 
@@ -456,12 +456,12 @@ const CONVERSATIONS = [
 const REVIEWS = [
     {
         id: 'review_1',
-        orderId: 'order_1',
+        orderId: 'order_2',
         reviewerId: 'user_1',
-        revieweeId: 'user_2',
+        revieweeId: 'user_5',
         rating: 5,
         comment: 'Excellent quality materials, exactly as described. Fast delivery!',
-        createdAt: '2024-12-11'
+        createdAt: '2024-11-24'
     }
 ];
 
@@ -496,57 +496,55 @@ function getProductsByCategory(category) {
     return PRODUCTS.filter(p => p.category === category);
 }
 
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    // Simplified distance calculation (in km)
-    const R = 6371; // Earth's radius in km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+function calculateSavings(price, marketPrice) {
+    if (!price || !marketPrice) return 0;
+    return Math.round(((marketPrice - price) / marketPrice) * 100);
+}
+
+function getPlaceholderImage(id, category) {
+    // Return placeholder colors/patterns based on category
+    // In a real app, this would return actual image URLs
+    const colors = {
+        'Wood': '8B4513',
+        'Metal': '708090',
+        'Masonry': 'CD853F',
+        'Electrical': 'FFFF00',
+        'Plumbing': '4682B4',
+        'Insulation': 'FFC0CB',
+        'Flooring': 'DEB887',
+        'Roofing': '8B0000',
+        'Paint & Coating': 'F0F8FF',
+        'Doors & Windows': '87CEEB',
+        'Hardware': 'C0C0C0',
+        'Concrete': '808080'
+    };
+
+    const color = colors[category] || 'CCCCCC';
+    return `https://placehold.co/400x300/${color}/FFFFFF?text=${category}`;
 }
 
 function formatPrice(price) {
-    return `€${price.toFixed(2).replace('.', ',')}`;
+    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
 }
 
 function formatDate(dateString) {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now - date);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-    return date.toLocaleDateString('de-DE');
+    return new Date(dateString).toLocaleDateString('de-DE');
 }
 
-function calculateSavings(price, marketPrice) {
-    return Math.round((1 - price / marketPrice) * 100);
-}
-
-// Export for use in other files
-if (typeof window !== 'undefined') {
-    window.AppState = AppState;
-    window.USERS = USERS;
-    window.CATEGORIES = CATEGORIES;
-    window.CONDITIONS = CONDITIONS;
-    window.UNITS = UNITS;
-    window.PRODUCTS = PRODUCTS;
-    window.ORDERS = ORDERS;
-    window.CONVERSATIONS = CONVERSATIONS;
-    window.REVIEWS = REVIEWS;
-    window.SAVED_SEARCHES = SAVED_SEARCHES;
-    window.getUserById = getUserById;
-    window.getProductById = getProductById;
-    window.getProductsBySeller = getProductsBySeller;
-    window.getProductsByCategory = getProductsByCategory;
-    window.calculateDistance = calculateDistance;
-    window.formatPrice = formatPrice;
-    window.formatDate = formatDate;
-    window.calculateSavings = calculateSavings;
-}
+// Export for usage
+window.PRODUCTS = PRODUCTS;
+window.USERS = USERS;
+window.ORDERS = ORDERS;
+window.DELIVERIES = DELIVERIES;
+window.CATEGORIES = CATEGORIES;
+window.CONDITIONS = CONDITIONS;
+window.CONVERSATIONS = CONVERSATIONS;
+window.AppState = AppState;
+window.getUserById = getUserById;
+window.getProductById = getProductById;
+window.getProductsBySeller = getProductsBySeller;
+window.getProductsByCategory = getProductsByCategory;
+window.calculateSavings = calculateSavings;
+window.getPlaceholderImage = getPlaceholderImage;
+window.formatPrice = formatPrice;
+window.formatDate = formatDate;
