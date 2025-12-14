@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Product, ProductImage, Order, OrderItem
+from .models import Category, Product, ProductImage, Order, OrderItem, Cart, CartItem, Wishlist
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -82,3 +82,103 @@ class OrderSerializer(serializers.ModelSerializer):
             'escrow_status', 'items', 'created_at', 'updated_at'
         ]
         read_only_fields = ['buyer', 'created_at', 'updated_at']
+
+
+class OrderCreateSerializer(serializers.Serializer):
+    """Serializer for creating orders with items."""
+    seller = serializers.IntegerField()
+    delivery_method = serializers.ChoiceField(choices=Order.DELIVERY_CHOICES)
+    items = serializers.ListField(
+        child=serializers.DictField(
+            child=serializers.DecimalField(max_digits=10, decimal_places=2)
+        )
+    )
+    
+    def validate_items(self, value):
+        """Validate that items list is not empty and has required fields."""
+        if not value:
+            raise serializers.ValidationError("Order must contain at least one item.")
+        for item in value:
+            if 'product_id' not in item or 'quantity' not in item:
+                raise serializers.ValidationError("Each item must have product_id and quantity.")
+        return value
+    
+    def create(self, validated_data):
+        """Create order with items."""
+        from decimal import Decimal
+        
+        items_data = validated_data.pop('items')
+        buyer = self.context['request'].user
+        seller_id = validated_data.pop('seller')
+        
+        # Calculate totals
+        total_amount = Decimal('0.00')
+        order_items = []
+        
+        for item_data in items_data:
+            product = Product.objects.get(id=item_data['product_id'])
+            quantity = Decimal(str(item_data['quantity']))
+            subtotal = product.price * quantity
+            total_amount += subtotal
+            order_items.append({
+                'product': product,
+                'quantity': quantity,
+                'price_at_purchase': product.price
+            })
+        
+        # Calculate tax (example: 21% VAT)
+        tax_amount = total_amount * Decimal('0.21')
+        
+        # Create order
+        order = Order.objects.create(
+            buyer=buyer,
+            seller_id=seller_id,
+            total_amount=total_amount,
+            tax_amount=tax_amount,
+            **validated_data
+        )
+        
+        # Create order items
+        for item_data in order_items:
+            OrderItem.objects.create(order=order, **item_data)
+        
+        return order
+
+
+class CartItemSerializer(serializers.ModelSerializer):
+    product_title = serializers.CharField(source='product.title', read_only=True)
+    product_price = serializers.DecimalField(source='product.price', max_digits=10, decimal_places=2, read_only=True)
+    product_image = serializers.SerializerMethodField()
+    subtotal = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    
+    def get_product_image(self, obj):
+        primary = obj.product.images.filter(is_primary=True).first()
+        if primary and primary.image:
+            return primary.image.url
+        first_image = obj.product.images.first()
+        return first_image.image.url if first_image and first_image.image else None
+    
+    class Meta:
+        model = CartItem
+        fields = ['id', 'product', 'product_title', 'product_price', 'product_image', 'quantity', 'subtotal', 'added_at']
+        read_only_fields = ['added_at']
+
+
+class CartSerializer(serializers.ModelSerializer):
+    items = CartItemSerializer(many=True, read_only=True)
+    total_items = serializers.IntegerField(read_only=True)
+    subtotal = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    
+    class Meta:
+        model = Cart
+        fields = ['id', 'user', 'items', 'total_items', 'subtotal', 'created_at', 'updated_at']
+        read_only_fields = ['user', 'created_at', 'updated_at']
+
+
+class WishlistSerializer(serializers.ModelSerializer):
+    product_details = ProductListSerializer(source='product', read_only=True)
+    
+    class Meta:
+        model = Wishlist
+        fields = ['id', 'product', 'product_details', 'saved_at']
+        read_only_fields = ['saved_at']

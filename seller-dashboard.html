@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="src/styles/index.css">
     <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/pages.css">
     <link rel="stylesheet" href="src/styles/mobile.css">
 </head>
 
@@ -21,7 +22,7 @@
     <div id="navbar-placeholder"></div>
 
     <div class="container section">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+        <div class="seller-dashboard-header">
             <h1>Seller Dashboard</h1>
             <button class="btn btn-primary" onclick="showNotification('Create Listing coming soon', 'info')">
                 + Create New Listing
@@ -29,8 +30,7 @@
         </div>
 
         <!-- Stats -->
-        <div
-            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 48px;">
+        <div class="stats-grid">
             <div class="card">
                 <div class="text-tertiary">Total Sales</div>
                 <div class="text-2xl font-bold">€8,450</div>
@@ -49,17 +49,17 @@
             </div>
         </div>
 
-        <div class="dashboard-layout" style="display: grid; grid-template-columns: 1fr 300px; gap: 32px;">
+        <div class="dashboard-layout">
             <div>
-                <h2 style="margin-bottom: 24px;">Your Listings</h2>
-                <div class="card" style="padding: 0; overflow: hidden;">
-                    <table style="width: 100%; border-collapse: collapse;">
+                <h2 class="dashboard-section-header">Your Listings</h2>
+                <div class="card order-card">
+                    <table class="listings-table">
                         <thead>
-                            <tr style="background: var(--color-background); text-align: left;">
-                                <th style="padding: 16px; font-weight: 600;">Product</th>
-                                <th style="padding: 16px; font-weight: 600;">Price</th>
-                                <th style="padding: 16px; font-weight: 600;">Status</th>
-                                <th style="padding: 16px; font-weight: 600;">Actions</th>
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="listings-table">
@@ -70,11 +70,10 @@
             </div>
 
             <div>
-                <h2 style="margin-bottom: 24px;">Recent Orders</h2>
+                <h2 class="dashboard-section-header">Recent Orders</h2>
                 <div class="card">
-                    <div
-                        style="border-bottom: 1px solid var(--color-background); padding-bottom: 16px; margin-bottom: 16px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <div class="seller-order-item">
+                        <div class="seller-order-header">
                             <strong>Order #49281</strong>
                             <span class="badge badge-warning">Pending</span>
                         </div>
@@ -104,27 +103,21 @@
             const myProducts = window.PRODUCTS.slice(0, 5);
 
             tbody.innerHTML = myProducts.map(p => `
-                <tr style="border-bottom: 1px solid var(--color-background);">
-                    <td style="padding: 16px;">
-                        <div style="font-weight: 600;">${p.title}</div>
-                        <div style="font-size: 0.85rem; color: var(--color-text-tertiary);">${p.category}</div>
+                <tr>
+                    <td>
+                        <div class="listings-table-product-title">${p.title}</div>
+                        <div class="listings-table-product-category">${p.category}</div>
                     </td>
-                    <td style="padding: 16px;">€${p.price}</td>
-                    <td style="padding: 16px;"><span class="badge badge-success">Active</span></td>
-                    <td style="padding: 16px;">
+                    <td>€${p.price}</td>
+                    <td><span class="badge badge-success">Active</span></td>
+                    <td>
                         <button class="btn btn-sm btn-ghost">Edit</button>
                     </td>
                 </tr>
             `).join('');
         });
 
-        const style = document.createElement('style');
-        style.innerHTML = `
-            @media (max-width: 900px) {
-                .dashboard-layout { grid-template-columns: 1fr !important; }
-            }
-        `;
-        document.head.appendChild(style);
+        // Media query now handled in pages.css
     </script>
 </body>
 

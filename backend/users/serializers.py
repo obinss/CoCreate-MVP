@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 
 User = get_user_model()
 
@@ -20,6 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'email': {'required': True},
             'password': {'write_only': True},
+            'tax_id': {'write_only': True},  # Hide sensitive field
         }
 
 
@@ -30,7 +31,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'password2', 'first_name', 'last_name', 'role']
+        fields = ['username', 'email', 'password', 'password2', 'first_name', 'last_name', 'role', 'phone']
         
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
@@ -41,6 +42,30 @@ class UserCreateSerializer(serializers.ModelSerializer):
         validated_data.pop('password2')
         user = User.objects.create_user(**validated_data)
         return user
+
+
+class LoginSerializer(serializers.Serializer):
+    """Serializer for user login."""
+    username = serializers.CharField()
+    password = serializers.CharField(style={'input_type': 'password'})
+    
+    def validate(self, attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
+        
+        if username and password:
+            user = authenticate(username=username, password=password)
+            
+            if not user:
+                raise serializers.ValidationError('Unable to log in with provided credentials.')
+            
+            if not user.is_active:
+                raise serializers.ValidationError('User account is disabled.')
+        else:
+            raise serializers.ValidationError('Must include "username" and "password".')
+        
+        attrs['user'] = user
+        return attrs
 
 
 class SellerApplicationSerializer(serializers.ModelSerializer):
@@ -58,3 +83,20 @@ class SellerApplicationSerializer(serializers.ModelSerializer):
         instance.default_pickup_address = validated_data.get('default_pickup_address', instance.default_pickup_address)
         instance.save()
         return instance
+
+
+class SellerVerificationSerializer(serializers.Serializer):
+    """Serializer for admin to verify seller applications."""
+    user_id = serializers.IntegerField()
+    approved = serializers.BooleanField()
+    
+    def validate_user_id(self, value):
+        try:
+            user = User.objects.get(id=value)
+            if not user.is_seller:
+                raise serializers.ValidationError('User is not a seller.')
+            if user.verification_status != 'pending':
+                raise serializers.ValidationError('Seller application is not pending.')
+        except User.DoesNotExist:
+            raise serializers.ValidationError('User not found.')
+        return value

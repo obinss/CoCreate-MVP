@@ -9,9 +9,8 @@
 
             <!-- Search Bar (Desktop) -->
             <div class="navbar-search">
-                <div class="input-group" style="margin-bottom: 0;">
-                    <label for="navbar-search-input" class="sr-only"
-                        style="position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden;">Search</label>
+                <div class="input-group">
+                    <label for="navbar-search-input" class="sr-only">Search</label>
                     <input type="text" class="input" placeholder="Search for materials..." id="navbar-search-input"
                         name="search" autocomplete="off" />
                 </div>
@@ -45,25 +44,24 @@
                     <a href="placeholder.html" class="navbar-link" id="nav-link-messages">Messages</a>
                 </li>
 
-                <li style="position: relative;">
+                <li class="navbar-cart-container">
                     <a href="cart.html" class="navbar-link" id="nav-link-cart">
                         Cart
-                        <span id="cart-badge" class="badge badge-primary"
-                            style="display: none; position: absolute; top: -8px; right: -8px; min-width: 20px; height: 20px; justify-content: center; align-items: center; padding: 2px 6px;">0</span>
+                        <span id="cart-badge" class="badge badge-primary cart-badge">0</span>
                     </a>
                 </li>
 
                 <!-- User Menu (Auth) -->
-                <li class="auth-only hidden" style="position: relative;">
-                    <button class="btn btn-ghost" id="user-menu-btn" style="white-space: nowrap;">
+                <li class="auth-only hidden user-menu-container">
+                    <button class="btn btn-ghost user-menu-btn" id="user-menu-btn">
                         User
                     </button>
                     <div class="dropdown-menu" id="user-menu" style="display: none;">
                         <a href="placeholder.html" class="dropdown-item">Profile</a>
                         <div id="seller-request-item" class="hidden">
                             <div class="dropdown-divider"></div>
-                            <a href="seller-request.html" class="dropdown-item"
-                                style="color: var(--color-primary); font-weight: 600;">Request Seller Verification</a>
+                            <a href="seller-request.html" class="dropdown-item seller-request-highlight">Request Seller
+                                Verification</a>
                         </div>
                         <div class="dropdown-divider"></div>
                         <a href="#" id="logout-btn" class="dropdown-item">Logout</a>

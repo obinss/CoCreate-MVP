@@ -1059,3 +1059,59 @@ mark.highlight,
     padding: 0 2px;
     border-radius: 2px;
 }
+
+/* === Navbar Specific Utilities === */
+.navbar-search .input-group {
+    margin-bottom: 0;
+}
+
+.navbar-cart-container {
+    position: relative;
+}
+
+.cart-badge {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    min-width: 20px;
+    height: 20px;
+    justify-content: center;
+    align-items: center;
+    padding: 2px 6px;
+}
+
+.cart-badge.has-items {
+    display: flex;
+}
+
+.user-menu-container {
+    position: relative;
+}
+
+.user-menu-btn {
+    white-space: nowrap;
+}
+
+.seller-request-highlight {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+/* Screen reader only */
+.sr-only {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* === Footer Specific Utilities === */
+.footer-text {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.footer-contact {
+    color: rgba(255, 255, 255, 0.8);
+}

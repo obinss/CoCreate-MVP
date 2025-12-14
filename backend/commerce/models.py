@@ -167,3 +167,57 @@ class OrderItem(models.Model):
     
     class Meta:
         db_table = 'order_items'
+
+
+class Cart(models.Model):
+    """Shopping cart for users."""
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='cart')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Cart - {self.user.username}"
+    
+    @property
+    def total_items(self):
+        return sum(item.quantity for item in self.items.all())
+    
+    @property
+    def subtotal(self):
+        return sum(item.subtotal for item in self.items.all())
+    
+    class Meta:
+        db_table = 'carts'
+
+
+class CartItem(models.Model):
+    """Items in a user's shopping cart."""
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1)
+    added_at = models.DateTimeField(auto_now_add=True)
+    
+    @property
+    def subtotal(self):
+        return self.quantity * self.product.price
+    
+    def __str__(self):
+        return f"{self.quantity}x {self.product.title}"
+    
+    class Meta:
+        db_table = 'cart_items'
+        unique_together = ['cart', 'product']
+
+
+class Wishlist(models.Model):
+    """User wishlist/saved products."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='wishlist')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='saved_by')
+    saved_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.product.title}"
+    
+    class Meta:
+        db_table = 'wishlist'
+        unique_together = ['user', 'product']

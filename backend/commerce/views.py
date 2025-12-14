@@ -1,10 +1,15 @@
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Category, Product, Order
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from .models import Category, Product, Order, Cart, CartItem, Wishlist
 from .serializers import (
-    CategorySerializer, ProductSerializer, ProductListSerializer, OrderSerializer
+    CategorySerializer, ProductSerializer, ProductListSerializer, 
+    OrderSerializer, OrderCreateSerializer, CartSerializer, 
+    CartItemSerializer, WishlistSerializer
 )
 
 
@@ -54,13 +59,145 @@ class ProductViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     """API endpoint for orders."""
     serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         user = self.request.user
         # Users can see orders where they are buyer or seller
         return Order.objects.filter(
-            models.Q(buyer=user) | models.Q(seller=user)
+            Q(buyer=user) | Q(seller=user)
         ).select_related('buyer', 'seller').prefetch_related('items__product')
     
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return OrderCreateSerializer
+        return OrderSerializer
+    
+    def create(self, request, *args, **kwargs):
+        """Create order with items."""
+        serializer = self.get_serializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+        
+        # Clear cart after successful order
+        cart = Cart.objects.filter(user=request.user).first()
+        if cart:
+            cart.items.all().delete()
+        
+        return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
+
+
+class CartViewSet(viewsets.ViewSet):
+    """API endpoint for shopping cart."""
+    permission_classes = [IsAuthenticated]
+    
+    def list(self, request):
+        """Get current user's cart."""
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        serializer = CartSerializer(cart)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['post'])
+    def add_item(self, request):
+        """Add item to cart."""
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        product_id = request.data.get('product_id')
+        quantity = request.data.get('quantity', 1)
+        
+        if not product_id:
+            return Response({'error': 'product_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        product = get_object_or_404(Product, id=product_id)
+        
+        # Check if item already in cart
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart,
+            product=product,
+            defaults={'quantity': quantity}
+        )
+        
+        if not created:
+            # Update quantity if item already exists
+            cart_item.quantity += quantity
+            cart_item.save()
+        
+        serializer = CartSerializer(cart)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['post'])
+    def update_item(self, request):
+        """Update item quantity in cart."""
+        cart = get_object_or_404(Cart, user=request.user)
+        product_id = request.data.get('product_id')
+        quantity = request.data.get('quantity')
+        
+        if not product_id or quantity is None:
+            return Response(
+                {'error': 'product_id and quantity are required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        cart_item = get_object_or_404(CartItem, cart=cart, product_id=product_id)
+        
+        if quantity <= 0:
+            cart_item.delete()
+        else:
+            cart_item.quantity = quantity
+            cart_item.save()
+        
+        serializer = CartSerializer(cart)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['post'])
+    def remove_item(self, request):
+        """Remove item from cart."""
+        cart = get_object_or_404(Cart, user=request.user)
+        product_id = request.data.get('product_id')
+        
+        if not product_id:
+            return Response({'error': 'product_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        cart_item = get_object_or_404(CartItem, cart=cart, product_id=product_id)
+        cart_item.delete()
+        
+        serializer = CartSerializer(cart)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['post'])
+    def clear(self, request):
+        """Clear all items from cart."""
+        cart = get_object_or_404(Cart, user=request.user)
+        cart.items.all().delete()
+        
+        serializer = CartSerializer(cart)
+        return Response(serializer.data)
+
+
+class WishlistViewSet(viewsets.ModelViewSet):
+    """API endpoint for wishlist/saved products."""
+    serializer_class = WishlistSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Wishlist.objects.filter(user=self.request.user).select_related('product')
+    
     def perform_create(self, serializer):
-        serializer.save(buyer=self.request.user)
+        serializer.save(user=self.request.user)
+    
+    @action(detail=False, methods=['post'])
+    def toggle(self, request):
+        """Toggle product in/out of wishlist."""
+        product_id = request.data.get('product_id')
+        
+        if not product_id:
+            return Response({'error': 'product_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        product = get_object_or_404(Product, id=product_id)
+        wishlist_item = Wishlist.objects.filter(user=request.user, product=product).first()
+        
+        if wishlist_item:
+            wishlist_item.delete()
+            return Response({'saved': False, 'message': 'Product removed from wishlist'})
+        else:
+            Wishlist.objects.create(user=request.user, product=product)
+            return Response({'saved': True, 'message': 'Product added to wishlist'})
