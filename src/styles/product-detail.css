@@ -1,0 +1,214 @@
+/* ============================================
+   CoCreate Platform - Product Detail Page CSS
+   ============================================ */
+
+/* Main Container */
+.product-detail-container {
+    margin-top: 32px;
+    margin-bottom: 64px;
+}
+
+/* Product Layout Grid */
+.product-layout {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 32px;
+}
+
+/* Image Gallery */
+.product-image-gallery {
+    padding: 0;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.product-image-gallery img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+}
+
+/* Product Info Card */
+.product-badges {
+    margin-bottom: 16px;
+}
+
+.product-badges .badge {
+    margin-left: 8px;
+}
+
+.product-badges .badge:first-child {
+    margin-left: 0;
+}
+
+.product-title {
+    margin-bottom: 16px;
+}
+
+/* Price Display */
+.product-price-section {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--color-background);
+}
+
+.product-price-main {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--color-primary);
+}
+
+.product-market-price {
+    font-size: 1.5rem;
+    text-decoration: line-through;
+    color: var(--color-text-tertiary);
+}
+
+.product-savings {
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+/* Specifications Grid */
+.product-specs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+/* Seller Info */
+.seller-info-section {
+    margin-top: 24px;
+}
+
+.seller-avatar-section {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.seller-avatar {
+    width: 60px;
+    height: 60px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+}
+
+.seller-details {
+    flex: 1;
+}
+
+.seller-name {
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+.seller-rating {
+    color: var(--color-warning);
+}
+
+/* Sidebar Actions */
+.product-sidebar {
+    position: sticky;
+    top: 120px;
+    height: fit-content;
+}
+
+/* Price Calculator Box */
+.price-calculator {
+    background: var(--color-background);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.price-row-tertiary {
+    color: var(--color-text-tertiary);
+    font-size: 0.875rem;
+}
+
+.price-total-row {
+    border-top: 1px solid var(--color-background);
+    padding-top: 8px;
+    margin-top: 8px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+/* Purchase Buttons */
+.purchase-btn-primary {
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.purchase-btn-secondary {
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.purchase-btn-contact {
+    width: 100%;
+}
+
+/* Login Required Alert */
+.login-required-alert {
+    margin-bottom: 16px;
+}
+
+.login-required-btn {
+    width: 100%;
+    text-decoration: none;
+}
+
+/* Security Info */
+.security-card {
+    margin-top: 16px;
+}
+
+.security-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.security-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-background);
+}
+
+/* Loading State */
+.product-loading {
+    padding: 64px;
+}
+
+/* Not Found Card */
+.product-not-found {
+    padding: 64px;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .product-layout {
+        grid-template-columns: 1fr !important;
+    }
+
+    .product-sidebar {
+        position: static;
+    }
+}

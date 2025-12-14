@@ -9,22 +9,22 @@ const OnboardingFlow = {
         {
             title: 'Welcome to CoCreate',
             content: 'The marketplace for surplus construction materials. Buy professional-grade inventory at great prices, or sell your excess stock.',
-            icon: '👋'
+            icon: '<i class="fas fa-handshake" style="color: #A6375F;"></i>'
         },
         {
             title: 'Browse & Buy',
             content: 'Search verified listings from contractors and suppliers. Filter by category, location, and price to find exactly what you need.',
-            icon: '🔍'
+            icon: '<i class="fas fa-magnifying-glass" style="color: #A6375F;"></i>'
         },
         {
             title: 'Secure Payments',
             content: 'Your money is held safely in escrow until you confirm delivery. 100% buyer protection on every transaction.',
-            icon: '🔒'
+            icon: '<i class="fas fa-shield-halved" style="color: #A6375F;"></i>'
         },
         {
             title: 'Sell Your Surplus',
             content: 'Have leftover materials? Become a verified seller and turn waste into revenue. List for free, pay only when you sell.',
-            icon: '💰'
+            icon: '<i class="fas fa-sack-dollar" style="color: #A6375F;"></i>'
         }
     ],
 

@@ -1,0 +1,83 @@
+<nav class="navbar">
+    <div class="navbar-inner">
+        <div class="container navbar-container">
+            <!-- Logo -->
+            <a href="index.html" class="navbar-logo">
+                <div class="navbar-logo-icon">CC</div>
+                <span>CoCreate</span>
+            </a>
+
+            <!-- Search Bar (Desktop) -->
+            <div class="navbar-search">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label for="navbar-search-input" class="sr-only"
+                        style="position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden;">Search</label>
+                    <input type="text" class="input" placeholder="Search for materials..." id="navbar-search-input"
+                        name="search" autocomplete="off" />
+                </div>
+            </div>
+
+            <!-- Mobile Hamburger -->
+            <button class="navbar-hamburger" id="navbar-hamburger" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <!-- Navigation Menu -->
+            <ul class="navbar-menu" id="navbar-menu">
+                <li>
+                    <a href="browse.html" class="navbar-link" id="nav-link-browse">Browse</a>
+                </li>
+
+                <!-- Auth Links (Hidden by default, shown via JS) -->
+                <li class="auth-only hidden">
+                    <a href="dashboard.html" class="navbar-link" id="nav-link-dashboard">My Orders</a>
+                </li>
+                <li class="seller-only hidden">
+                    <a href="seller-dashboard.html" class="navbar-link" id="nav-link-seller">Dashboard</a>
+                </li>
+                <li class="admin-only hidden">
+                    <a href="placeholder.html" class="navbar-link" id="nav-link-admin">Admin</a>
+                </li>
+
+                <li class="auth-only hidden">
+                    <a href="placeholder.html" class="navbar-link" id="nav-link-messages">Messages</a>
+                </li>
+
+                <li style="position: relative;">
+                    <a href="cart.html" class="navbar-link" id="nav-link-cart">
+                        Cart
+                        <span id="cart-badge" class="badge badge-primary"
+                            style="display: none; position: absolute; top: -8px; right: -8px; min-width: 20px; height: 20px; justify-content: center; align-items: center; padding: 2px 6px;">0</span>
+                    </a>
+                </li>
+
+                <!-- User Menu (Auth) -->
+                <li class="auth-only hidden" style="position: relative;">
+                    <button class="btn btn-ghost" id="user-menu-btn" style="white-space: nowrap;">
+                        User
+                    </button>
+                    <div class="dropdown-menu" id="user-menu" style="display: none;">
+                        <a href="placeholder.html" class="dropdown-item">Profile</a>
+                        <div id="seller-request-item" class="hidden">
+                            <div class="dropdown-divider"></div>
+                            <a href="seller-request.html" class="dropdown-item"
+                                style="color: var(--color-primary); font-weight: 600;">Request Seller Verification</a>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" id="logout-btn" class="dropdown-item">Logout</a>
+                    </div>
+                </li>
+
+                <!-- Guest Links -->
+                <li class="guest-only">
+                    <a href="login.html" class="btn btn-outline btn-sm">Login</a>
+                </li>
+                <li class="guest-only">
+                    <a href="signup.html" class="btn btn-primary btn-sm">Sign Up</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

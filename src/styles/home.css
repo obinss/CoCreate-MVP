@@ -1,0 +1,160 @@
+/* ============================================
+   CoCreate Platform - Home Page Animations & Styles
+   ============================================ */
+
+:root {
+    --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Scroll Reveal Base Styles */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s var(--ease-smooth), transform 1s var(--ease-smooth);
+}
+
+.scroll-reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.delay-100 {
+    transition-delay: 0.1s;
+}
+
+.delay-200 {
+    transition-delay: 0.2s;
+}
+
+.delay-300 {
+    transition-delay: 0.3s;
+}
+
+/* Marquee Animation */
+.marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.marquee-content {
+    display: inline-flex;
+    animation: marquee 30s linear infinite;
+    gap: 24px;
+}
+
+.marquee-content:hover {
+    animation-play-state: paused;
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* Hero Blob Animation */
+.hero-blob {
+    position: absolute;
+    filter: blur(80px);
+    opacity: 0.6;
+    z-index: 0;
+    animation: blob-float 10s ease-in-out infinite;
+}
+
+@keyframes blob-float {
+
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(30px, -50px) scale(1.1);
+    }
+
+    66% {
+        transform: translate(-20px, 20px) scale(0.9);
+    }
+}
+
+/* Bento Grid */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 24px;
+}
+
+.bento-card {
+    background: #f8f9fa;
+    border-radius: 32px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s var(--ease-smooth), box-shadow 0.3s var(--ease-smooth);
+}
+
+.bento-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.bento-light {
+    background: #ffffff;
+    border: 1px solid #f0f0f0;
+}
+
+.bento-primary {
+    background: #A6375F;
+    color: white;
+}
+
+.bento-dark {
+    background: #1a1a1a;
+    color: white;
+}
+
+.col-span-12 {
+    grid-column: span 12;
+}
+
+.col-span-8 {
+    grid-column: span 8;
+}
+
+.col-span-6 {
+    grid-column: span 6;
+}
+
+.col-span-4 {
+    grid-column: span 4;
+}
+
+@media (max-width: 968px) {
+
+    .col-span-8,
+    .col-span-6,
+    .col-span-4 {
+        grid-column: span 12;
+    }
+}
+
+/* Massive Pill Button */
+.btn-pill {
+    border-radius: 100px;
+    padding: 20px 48px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: transform 0.2s var(--ease-smooth);
+}
+
+.btn-pill:hover {
+    transform: scale(1.05);
+}

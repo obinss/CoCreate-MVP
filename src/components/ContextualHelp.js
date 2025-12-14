@@ -57,11 +57,11 @@ const ContextualHelp = {
                     <h3 style="font-size: 0.85rem; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">Quick Links</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                         <button onclick="navigate('browse')" style="padding: 16px; background: #fafafa; border: 1px solid #e8e8e8; border-radius: 10px; cursor: pointer; text-align: left;">
-                            <div style="font-size: 1.5rem; margin-bottom: 8px;">🔍</div>
+                            <div style="font-size: 1.5rem; margin-bottom: 8px;"><i class="fas fa-magnifying-glass"></i></div>
                             <div style="font-weight: 500;">Browse</div>
                         </button>
                         <button onclick="navigate('seller-application')" style="padding: 16px; background: #fafafa; border: 1px solid #e8e8e8; border-radius: 10px; cursor: pointer; text-align: left;">
-                            <div style="font-size: 1.5rem; margin-bottom: 8px;">📦</div>
+                            <div style="font-size: 1.5rem; margin-bottom: 8px;"><i class="fas fa-box"></i></div>
                             <div style="font-weight: 500;">Sell</div>
                         </button>
                     </div>

@@ -1,0 +1,14 @@
+/* ============================================
+   CoCreate Platform - Generic Pages CSS
+   ============================================ */
+
+/* Placeholder/Coming Soon Pages */
+.placeholder-container {
+    padding: 100px 0;
+}
+
+/* Generic centered content */
+.page-centered {
+    max-width: 600px;
+    margin: 0 auto;
+}

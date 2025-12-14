@@ -1,0 +1,72 @@
+/* ============================================
+   CoCreate Platform - Authentication Pages CSS
+   ============================================ */
+
+/* Auth Page Container */
+.auth-container {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+/* Auth Card */
+.auth-card {
+    padding: 48px;
+}
+
+/* Auth Header */
+.auth-header {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.auth-subheader {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+/* Remember Me Checkbox */
+.auth-checkbox-group {
+    margin-bottom: 24px;
+}
+
+.auth-checkbox-group label {
+    cursor: pointer;
+}
+
+/* Submit Button */
+.auth-submit-btn {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+/* Divider Section */
+.auth-divider {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-background);
+}
+
+.auth-divider a {
+    font-weight: 600;
+}
+
+/* Demo Account Info */
+.auth-demo-info {
+    margin-top: 24px;
+}
+
+/* Signup Role Options */
+.signup-role-label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+/* Terms Checkbox */
+.auth-terms-checkbox {
+    margin-bottom: 24px;
+}
+
+.auth-terms-checkbox label {
+    cursor: pointer;
+}

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Dashboard - CoCreate</title>
+
+    <!-- Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="src/styles/index.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/mobile.css">
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <div class="container section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <h1>Seller Dashboard</h1>
+            <button class="btn btn-primary" onclick="showNotification('Create Listing coming soon', 'info')">
+                + Create New Listing
+            </button>
+        </div>
+
+        <!-- Stats -->
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 48px;">
+            <div class="card">
+                <div class="text-tertiary">Total Sales</div>
+                <div class="text-2xl font-bold">€8,450</div>
+            </div>
+            <div class="card">
+                <div class="text-tertiary">Active Listings</div>
+                <div class="text-2xl font-bold">12</div>
+            </div>
+            <div class="card">
+                <div class="text-tertiary">Views (30d)</div>
+                <div class="text-2xl font-bold">1,204</div>
+            </div>
+            <div class="card">
+                <div class="text-tertiary">Rating</div>
+                <div class="text-2xl font-bold">4.8 <span class="text-sm font-normal text-tertiary">/ 5.0</span></div>
+            </div>
+        </div>
+
+        <div class="dashboard-layout" style="display: grid; grid-template-columns: 1fr 300px; gap: 32px;">
+            <div>
+                <h2 style="margin-bottom: 24px;">Your Listings</h2>
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--color-background); text-align: left;">
+                                <th style="padding: 16px; font-weight: 600;">Product</th>
+                                <th style="padding: 16px; font-weight: 600;">Price</th>
+                                <th style="padding: 16px; font-weight: 600;">Status</th>
+                                <th style="padding: 16px; font-weight: 600;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listings-table">
+                            <!-- Populated JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <h2 style="margin-bottom: 24px;">Recent Orders</h2>
+                <div class="card">
+                    <div
+                        style="border-bottom: 1px solid var(--color-background); padding-bottom: 16px; margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <strong>Order #49281</strong>
+                            <span class="badge badge-warning">Pending</span>
+                        </div>
+                        <div class="text-sm text-tertiary">High-Grade Cement x 50</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="src/data/mockData.js"></script>
+    <script src="src/utils/utils.js"></script>
+    <script src="src/utils/loadComponents.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('cocreate_user'));
+            if (!user) { // || !user.isSeller
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Populate Listings
+            const tbody = document.getElementById('listings-table');
+            // Filter products for "current user" - we mock this by picking random ones or just showing all for demo
+            const myProducts = window.PRODUCTS.slice(0, 5);
+
+            tbody.innerHTML = myProducts.map(p => `
+                <tr style="border-bottom: 1px solid var(--color-background);">
+                    <td style="padding: 16px;">
+                        <div style="font-weight: 600;">${p.title}</div>
+                        <div style="font-size: 0.85rem; color: var(--color-text-tertiary);">${p.category}</div>
+                    </td>
+                    <td style="padding: 16px;">€${p.price}</td>
+                    <td style="padding: 16px;"><span class="badge badge-success">Active</span></td>
+                    <td style="padding: 16px;">
+                        <button class="btn btn-sm btn-ghost">Edit</button>
+                    </td>
+                </tr>
+            `).join('');
+        });
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @media (max-width: 900px) {
+                .dashboard-layout { grid-template-columns: 1fr !important; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+</html>

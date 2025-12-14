@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - CoCreate</title>
+
+    <!-- Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="src/styles/index.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/mobile.css">
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <div class="container section">
+        <h1 style="margin-bottom: 32px;">Shopping Cart</h1>
+        <div id="cart-content">
+            <!-- Populated by JS -->
+            <div class="text-center" style="padding: 64px;">Loading cart...</div>
+        </div>
+    </div>
+
+    <div id="notifications"></div>
+    <div id="footer-placeholder"></div>
+
+    <script src="src/data/mockData.js"></script>
+    <script src="src/utils/utils.js"></script>
+    <script src="src/utils/ui.js"></script>
+    <script src="src/utils/loadComponents.js"></script>
+    <script src="src/pages/Cart.page.js"></script>
+</body>
+
+</html>

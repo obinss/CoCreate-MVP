@@ -1,0 +1,93 @@
+/* ============================================
+   CoCreate Platform - Browse Page CSS
+   ============================================ */
+
+/* Main Container */
+.browse-container {
+    margin-top: 32px;
+    margin-bottom: 64px;
+}
+
+/* Browse Layout Grid */
+.browse-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 32px;
+}
+
+/* Filter Sidebar */
+.filter-sidebar .card {
+    position: sticky;
+    top: 100px;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.filter-header h3 {
+    margin: 0;
+}
+
+.filter-header .btn {
+    background: transparent;
+    color: #666;
+}
+
+/* Search Input */
+.filter-search-group {
+    position: relative;
+}
+
+/* Price Range Inputs */
+.price-range-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+/* Location Radius */
+.location-radius-input {
+    margin-top: 8px;
+}
+
+/* Results Header */
+.results-header {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.results-header h2 {
+    margin: 0;
+}
+
+.results-header select {
+    width: auto;
+}
+
+/* No Results Card */
+.no-results-card {
+    padding: 64px;
+}
+
+.no-results-action {
+    background: #1a1a1a;
+    color: white;
+    margin-top: 16px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .browse-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-sidebar .card {
+        position: static;
+    }
+}
