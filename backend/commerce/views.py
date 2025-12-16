@@ -5,11 +5,13 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from .models import Category, Product, Order, Cart, CartItem, Wishlist
+from django.utils import timezone
+from .models import Category, Product, Order, Cart, CartItem, Wishlist, Project, ProductAlert, Kit
 from .serializers import (
     CategorySerializer, ProductSerializer, ProductListSerializer, 
     OrderSerializer, OrderCreateSerializer, CartSerializer, 
-    CartItemSerializer, WishlistSerializer
+    CartItemSerializer, WishlistSerializer, ProjectSerializer,
+    ProductAlertSerializer, KitSerializer
 )
 
 
@@ -201,3 +203,141 @@ class WishlistViewSet(viewsets.ModelViewSet):
         else:
             Wishlist.objects.create(user=request.user, product=product)
             return Response({'saved': True, 'message': 'Product added to wishlist'})
+
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    """API endpoint for buyer projects."""
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Project.objects.filter(buyer=self.request.user).prefetch_related('orders')
+    
+    def perform_create(self, serializer):
+        serializer.save(buyer=self.request.user)
+    
+    @action(detail=True, methods=['get'])
+    def orders(self, request, pk=None):
+        """Get all orders for a project."""
+        project = self.get_object()
+        orders = project.orders.all()
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+
+class ProductAlertViewSet(viewsets.ModelViewSet):
+    """API endpoint for product alerts."""
+    serializer_class = ProductAlertSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return ProductAlert.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    
+    @action(detail=False, methods=['post'])
+    def check_matches(self, request):
+        """Check for products matching active alerts."""
+        from math import radians, cos, sin, asin, sqrt
+        
+        alerts = ProductAlert.objects.filter(user=request.user, is_active=True)
+        matches = []
+        
+        for alert in alerts:
+            # Build query
+            query = Q(status='active')
+            
+            if alert.keywords:
+                query &= (Q(title__icontains=alert.keywords) | Q(description__icontains=alert.keywords))
+            
+            if alert.category:
+                query &= Q(category=alert.category)
+            
+            if alert.max_price:
+                query &= Q(price__lte=alert.max_price)
+            
+            if alert.condition:
+                query &= Q(condition=alert.condition)
+            
+            # Location filter (if provided)
+            products = Product.objects.filter(query)
+            
+            if alert.location_lat and alert.location_long:
+                # Filter by radius
+                def haversine(lon1, lat1, lon2, lat2):
+                    """Calculate distance between two points."""
+                    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+                    dlon = lon2 - lon1
+                    dlat = lat2 - lat1
+                    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+                    c = 2 * asin(sqrt(a))
+                    km = 6371 * c
+                    return km
+                
+                filtered_products = []
+                for product in products:
+                    if product.location_lat and product.location_long:
+                        distance = haversine(
+                            float(alert.location_long),
+                            float(alert.location_lat),
+                            float(product.location_long),
+                            float(product.location_lat)
+                        )
+                        if distance <= alert.radius_km:
+                            filtered_products.append(product)
+                products = filtered_products
+            else:
+                products = list(products)
+            
+            if products:
+                matches.append({
+                    'alert_id': alert.id,
+                    'alert_name': str(alert),
+                    'products': ProductListSerializer(products, many=True).data
+                })
+        
+        return Response({'matches': matches})
+
+
+class KitViewSet(viewsets.ModelViewSet):
+    """API endpoint for limited-time kits."""
+    queryset = Kit.objects.all()
+    serializer_class = KitSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['kit_type', 'status']
+    search_fields = ['title', 'description']
+    ordering_fields = ['start_date', 'end_date', 'price', 'created_at']
+    ordering = ['-created_at']
+    
+    @action(detail=False, methods=['get'])
+    def active(self, request):
+        """Get all currently active kits."""
+        now = timezone.now()
+        active_kits = Kit.objects.filter(
+            status='active',
+            start_date__lte=now,
+            end_date__gte=now,
+            quantity_available__gt=0
+        )
+        serializer = self.get_serializer(active_kits, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def upcoming(self, request):
+        """Get all upcoming kits."""
+        now = timezone.now()
+        upcoming_kits = Kit.objects.filter(
+            status='upcoming',
+            start_date__gt=now
+        )
+        serializer = self.get_serializer(upcoming_kits, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'])
+    def increment_views(self, request, pk=None):
+        """Increment kit view count."""
+        kit = self.get_object()
+        kit.views += 1
+        kit.save(update_fields=['views'])
+        return Response({'views': kit.views})

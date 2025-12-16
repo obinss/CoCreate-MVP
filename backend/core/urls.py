@@ -4,7 +4,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import obtain_auth_token
-from commerce.views import CategoryViewSet, ProductViewSet, OrderViewSet, CartViewSet, WishlistViewSet
+from commerce.views import (
+    CategoryViewSet, ProductViewSet, OrderViewSet, CartViewSet, WishlistViewSet,
+    ProjectViewSet, ProductAlertViewSet, KitViewSet
+)
 from users.views import UserViewSet
 
 # DRF Router
@@ -14,6 +17,9 @@ router.register(r'products', ProductViewSet)
 router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'cart', CartViewSet, basename='cart')
 router.register(r'wishlist', WishlistViewSet, basename='wishlist')
+router.register(r'projects', ProjectViewSet, basename='project')
+router.register(r'alerts', ProductAlertViewSet, basename='alert')
+router.register(r'kits', KitViewSet, basename='kit')
 router.register(r'users', UserViewSet)
 
 urlpatterns = [

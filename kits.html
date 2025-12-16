@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limited-Time Kits - CoCreate</title>
+
+    <!-- Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="src/styles/index.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/pages.css">
+    <link rel="stylesheet" href="src/styles/mobile.css">
+    <style>
+        .kits-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .kits-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .kits-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .kits-header p {
+            font-size: 1.1rem;
+            color: var(--text-tertiary);
+        }
+
+        .kits-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .kits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .kit-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .kit-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .kit-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            z-index: 10;
+        }
+
+        .kit-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .kit-content {
+            padding: 1.5rem;
+        }
+
+        .kit-header {
+            margin-bottom: 1rem;
+        }
+
+        .kit-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .kit-type {
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kit-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .kit-pricing {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .kit-price {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .kit-market-price {
+            font-size: 1rem;
+            color: var(--text-tertiary);
+            text-decoration: line-through;
+        }
+
+        .kit-savings {
+            background: #E8F5E9;
+            color: #2E7D32;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .countdown-timer {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .countdown-label {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .countdown-display {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .countdown-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .countdown-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .countdown-label-unit {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+        }
+
+        .kit-specs {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .kit-specs-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+        }
+
+        .kit-specs-content {
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .kit-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .kit-stock {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        .kit-stock.high {
+            color: #2E7D32;
+        }
+
+        .kit-stock.low {
+            color: #D32F2F;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-tertiary);
+        }
+
+        .empty-state i {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            color: var(--text-tertiary);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <div class="kits-container section">
+        <div class="kits-header">
+            <h1>Limited-Time Kits</h1>
+            <p>Premium construction materials from commercial sites - Available for a limited time only</p>
+        </div>
+
+        <div class="kits-tabs">
+            <button class="tab-button active" onclick="filterKits('active')">Active Kits</button>
+            <button class="tab-button" onclick="filterKits('upcoming')">Upcoming</button>
+            <button class="tab-button" onclick="filterKits('all')">All Kits</button>
+        </div>
+
+        <div id="kits-grid" class="kits-grid">
+            <!-- Kits will be loaded here -->
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="src/utils/utils.js"></script>
+    <script src="src/utils/loadComponents.js"></script>
+    <script src="src/api/config.js"></script>
+    <script>
+        const API_BASE_URL = window.API_CONFIG?.baseURL || 'http://localhost:8000/api';
+
+        let kits = [];
+        let currentFilter = 'active';
+
+        const KIT_TYPES = {
+            'thermal_shell': 'Thermal Shell Pack',
+            'stone_bbq': 'Stone BBQ Station',
+            'herringbone_deck': 'Herringbone Deck Pack',
+            'industrial_shelving': 'Industrial Shelving Unit',
+            'privacy_screen': 'Privacy Screen Kit',
+            'green_wall': 'Green Wall Trellis Kit',
+            'instant_path': 'Instant Path Aggregate Pack',
+            'acoustic_pack': 'Silent Office Acoustic Pack',
+            'garage_rail': 'Heavy Duty Garage Rail'
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadKits();
+            setInterval(updateCountdowns, 1000);
+        });
+
+        async function loadKits() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/kits/`);
+                if (response.ok) {
+                    kits = await response.json();
+                    renderKits();
+                } else {
+                    kits = getMockKits();
+                    renderKits();
+                }
+            } catch (error) {
+                console.error('Error loading kits:', error);
+                kits = getMockKits();
+                renderKits();
+            }
+        }
+
+        function getMockKits() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const nextWeek = new Date(now);
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            const nextMonth = new Date(now);
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+            return [
+                {
+                    id: 1,
+                    kit_type: 'thermal_shell',
+                    title: 'The Thermal Shell Pack',
+                    description: 'High-performance insulation kit for a 3m x 3m garden office. Includes 15 sheets of 100mm PIR insulation, framing materials, and vapor control layer.',
+                    start_date: now.toISOString(),
+                    end_date: nextWeek.toISOString(),
+                    quantity_available: 5,
+                    quantity_sold: 3,
+                    price: '225.00',
+                    market_price: '550.00',
+                    location_name: 'Berlin',
+                    status: 'active',
+                    specifications: '15 Sheets of 100mm PIR Insulation, 40 Linear meters of Framing, 1 Roll Vapor Control Layer, Hardware Pack included'
+                },
+                {
+                    id: 2,
+                    kit_type: 'stone_bbq',
+                    title: 'The Chef\'s Outdoor Prep Station',
+                    description: 'Premium granite countertop with architectural facing bricks. Perfect for outdoor kitchen or BBQ station.',
+                    start_date: now.toISOString(),
+                    end_date: nextMonth.toISOString(),
+                    quantity_available: 2,
+                    quantity_sold: 1,
+                    price: '400.00',
+                    market_price: '800.00',
+                    location_name: 'Munich',
+                    status: 'active',
+                    specifications: '1 x Stone Slab (Cut to size), 120 x Bricks, 3 Bags Pre-mixed Mortar, 1 Tube Stone Adhesive'
+                },
+                {
+                    id: 3,
+                    kit_type: 'herringbone_deck',
+                    title: 'The Herringbone Deck Pack',
+                    description: 'High-end composite decking in short lengths, perfect for stunning herringbone or box pattern layouts.',
+                    start_date: tomorrow.toISOString(),
+                    end_date: nextMonth.toISOString(),
+                    quantity_available: 8,
+                    quantity_sold: 0,
+                    price: '350.00',
+                    market_price: '600.00',
+                    location_name: 'Hamburg',
+                    status: 'upcoming',
+                    specifications: '~40 Decking Boards (Uniform short lengths), 25m Structural Timber, 200 x Hidden Clip Fasteners & Screws'
+                },
+                {
+                    id: 4,
+                    kit_type: 'industrial_shelving',
+                    title: 'The Loft Style Shelving Unit',
+                    description: 'Heavy-duty galvanized cable tray shelving with threaded rod supports. Industrial chic design.',
+                    start_date: now.toISOString(),
+                    end_date: nextWeek.toISOString(),
+                    quantity_available: 1,
+                    quantity_sold: 4,
+                    price: '120.00',
+                    market_price: '300.00',
+                    location_name: 'Berlin',
+                    status: 'active',
+                    specifications: '5 x Cable Tray shelves (pre-cut to 1m), 4 x 2m Threaded Rods, Hardware Pack included'
+                }
+            ];
+        }
+
+        function filterKits(filter) {
+            currentFilter = filter;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            renderKits();
+        }
+
+        function renderKits() {
+            const container = document.getElementById('kits-grid');
+            
+            let filteredKits = kits;
+            if (currentFilter === 'active') {
+                filteredKits = kits.filter(kit => kit.status === 'active' && kit.is_available !== false);
+            } else if (currentFilter === 'upcoming') {
+                filteredKits = kits.filter(kit => kit.status === 'upcoming');
+            }
+
+            if (filteredKits.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <i class="fas fa-box-open"></i>
+                        <h3>No kits available</h3>
+                        <p>Check back soon for new limited-time kits!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredKits.map(kit => `
+                <div class="kit-card">
+                    <div class="kit-badge">${kit.status === 'upcoming' ? 'Upcoming' : 'Limited Time'}</div>
+                    <div class="kit-image">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="kit-content">
+                        <div class="kit-header">
+                            <div class="kit-type">${KIT_TYPES[kit.kit_type] || kit.kit_type}</div>
+                            <div class="kit-title">${kit.title}</div>
+                        </div>
+                        <div class="kit-description">${kit.description}</div>
+                        
+                        ${kit.status === 'active' ? `
+                            <div class="countdown-timer" id="countdown-${kit.id}">
+                                <div class="countdown-label">Time Remaining</div>
+                                <div class="countdown-display">
+                                    <div class="countdown-unit">
+                                        <div class="countdown-value" id="days-${kit.id}">00</div>
+                                        <div class="countdown-label-unit">Days</div>
+                                    </div>
+                                    <div class="countdown-unit">
+                                        <div class="countdown-value" id="hours-${kit.id}">00</div>
+                                        <div class="countdown-label-unit">Hours</div>
+                                    </div>
+                                    <div class="countdown-unit">
+                                        <div class="countdown-value" id="minutes-${kit.id}">00</div>
+                                        <div class="countdown-label-unit">Min</div>
+                                    </div>
+                                    <div class="countdown-unit">
+                                        <div class="countdown-value" id="seconds-${kit.id}">00</div>
+                                        <div class="countdown-label-unit">Sec</div>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <div class="kit-specs">
+                            <div class="kit-specs-title">Kit Contents</div>
+                            <div class="kit-specs-content">${kit.specifications || 'See description for details'}</div>
+                        </div>
+
+                        <div class="kit-pricing">
+                            <div class="kit-price">€${parseFloat(kit.price).toFixed(2)}</div>
+                            ${kit.market_price ? `
+                                <div class="kit-market-price">€${parseFloat(kit.market_price).toFixed(2)}</div>
+                                <div class="kit-savings">Save ${calculateSavings(kit.price, kit.market_price)}%</div>
+                            ` : ''}
+                        </div>
+
+                        <div class="kit-footer">
+                            <div>
+                                <div class="kit-stock ${kit.quantity_available > 3 ? 'high' : kit.quantity_available > 0 ? '' : 'low'}">
+                                    ${kit.quantity_available > 0 
+                                        ? `${kit.quantity_available} available` 
+                                        : 'Sold Out'}
+                                </div>
+                                <div class="text-sm text-tertiary">${kit.location_name}</div>
+                            </div>
+                            <button class="btn btn-primary" ${kit.quantity_available === 0 ? 'disabled' : ''} 
+                                onclick="viewKit(${kit.id})">
+                                ${kit.status === 'upcoming' ? 'Notify Me' : 'View Details'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            updateCountdowns();
+        }
+
+        function updateCountdowns() {
+            kits.forEach(kit => {
+                if (kit.status === 'active' && kit.end_date) {
+                    const now = new Date().getTime();
+                    const end = new Date(kit.end_date).getTime();
+                    const distance = end - now;
+
+                    if (distance > 0) {
+                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                        const daysEl = document.getElementById(`days-${kit.id}`);
+                        const hoursEl = document.getElementById(`hours-${kit.id}`);
+                        const minutesEl = document.getElementById(`minutes-${kit.id}`);
+                        const secondsEl = document.getElementById(`seconds-${kit.id}`);
+
+                        if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+                        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+                        if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+                        if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+                    } else {
+                        // Kit expired
+                        const countdownEl = document.getElementById(`countdown-${kit.id}`);
+                        if (countdownEl) {
+                            countdownEl.innerHTML = '<div style="color: #D32F2F; font-weight: 600;">Expired</div>';
+                        }
+                    }
+                }
+            });
+        }
+
+        function calculateSavings(price, marketPrice) {
+            return Math.round(((marketPrice - price) / marketPrice) * 100);
+        }
+
+        function viewKit(id) {
+            const kit = kits.find(k => k.id === id);
+            if (!kit) return;
+
+            // For now, redirect to product detail or show modal
+            // In a real implementation, this would navigate to kit detail page
+            alert(`Viewing ${kit.title}\n\nPrice: €${parseFloat(kit.price).toFixed(2)}\nLocation: ${kit.location_name}\n\nThis would navigate to a detailed kit page.`);
+        }
+
+        // Update countdowns every second
+        setInterval(updateCountdowns, 1000);
+    </script>
+</body>
+
+</html>
+

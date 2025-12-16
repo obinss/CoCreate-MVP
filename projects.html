@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Projects - CoCreate</title>
+
+    <!-- Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="src/styles/index.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/pages.css">
+    <link rel="stylesheet" href="src/styles/mobile.css">
+    <style>
+        .projects-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .projects-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .project-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-planning { background: #E3F2FD; color: #1976D2; }
+        .status-active { background: #E8F5E9; color: #388E3C; }
+        .status-on_hold { background: #FFF3E0; color: #F57C00; }
+        .status-completed { background: #F3E5F5; color: #7B1FA2; }
+        .status-cancelled { background: #FFEBEE; color: #D32F2F; }
+
+        .project-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+        }
+
+        .project-detail-view {
+            display: none;
+        }
+
+        .project-detail-view.active {
+            display: block;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .back-button:hover {
+            text-decoration: underline;
+        }
+
+        .project-detail-header {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .orders-section {
+            margin-top: 2rem;
+        }
+
+        .order-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .order-items {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-tertiary);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <div class="projects-container section">
+        <!-- Projects List View -->
+        <div id="projects-list-view">
+            <div class="projects-header">
+                <div>
+                    <h1>My Projects</h1>
+                    <p class="text-tertiary">Organize your orders by project</p>
+                </div>
+                <button class="btn btn-primary" onclick="openCreateProjectModal()">
+                    <i class="fas fa-plus"></i> New Project
+                </button>
+            </div>
+
+            <div id="projects-grid" class="projects-grid">
+                <!-- Projects will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Project Detail View -->
+        <div id="project-detail-view" class="project-detail-view">
+            <div class="back-button" onclick="showProjectsList()">
+                <i class="fas fa-arrow-left"></i> Back to Projects
+            </div>
+
+            <div id="project-detail-content">
+                <!-- Project details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Project Modal -->
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 id="modal-title">Create Project</h2>
+                <button onclick="closeProjectModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-tertiary);">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="project-form" onsubmit="saveProject(event)">
+                <input type="hidden" id="project-id" name="id">
+
+                <div class="form-group">
+                    <label for="project-name">Project Name *</label>
+                    <input type="text" id="project-name" name="name" required placeholder="e.g., Kitchen Renovation">
+                </div>
+
+                <div class="form-group">
+                    <label for="project-description">Description</label>
+                    <textarea id="project-description" name="description" rows="4" placeholder="Describe your project..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="project-budget">Budget (€)</label>
+                    <input type="number" id="project-budget" name="budget" step="0.01" placeholder="e.g., 5000.00">
+                </div>
+
+                <div class="form-group">
+                    <label for="project-status">Status</label>
+                    <select id="project-status" name="status">
+                        <option value="planning">Planning</option>
+                        <option value="active">Active</option>
+                        <option value="on_hold">On Hold</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                    <button type="button" class="btn btn-outline" onclick="closeProjectModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="src/utils/utils.js"></script>
+    <script src="src/utils/loadComponents.js"></script>
+    <script src="src/api/config.js"></script>
+    <script>
+        const API_BASE_URL = window.API_CONFIG?.baseURL || 'http://localhost:8000/api';
+
+        let projects = [];
+        let currentProjectId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('cocreate_user'));
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+            loadProjects();
+        });
+
+        async function loadProjects() {
+            try {
+                const token = localStorage.getItem('cocreate_token');
+                const response = await fetch(`${API_BASE_URL}/projects/`, {
+                    headers: {
+                        'Authorization': token ? `Token ${token}` : '',
+                    }
+                });
+
+                if (response.ok) {
+                    projects = await response.json();
+                    renderProjects();
+                } else {
+                    projects = getMockProjects();
+                    renderProjects();
+                }
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                projects = getMockProjects();
+                renderProjects();
+            }
+        }
+
+        function getMockProjects() {
+            return [
+                {
+                    id: 1,
+                    name: 'Kitchen Renovation',
+                    description: 'Full remodel of kitchen in Apt 4B',
+                    budget: '15000.00',
+                    status: 'active',
+                    total_spent: '450.00',
+                    order_count: 2,
+                    created_at: '2024-11-01T10:00:00Z'
+                },
+                {
+                    id: 2,
+                    name: 'Backyard Deck',
+                    description: 'New 20sqm deck with composite materials',
+                    budget: '5000.00',
+                    status: 'planning',
+                    total_spent: '53.55',
+                    order_count: 1,
+                    created_at: '2024-12-05T09:00:00Z'
+                }
+            ];
+        }
+
+        function renderProjects() {
+            const container = document.getElementById('projects-grid');
+            
+            if (projects.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <i class="fas fa-folder-open" style="font-size: 4rem; margin-bottom: 1rem; color: var(--text-tertiary);"></i>
+                        <h3>No projects yet</h3>
+                        <p>Create your first project to organize your orders</p>
+                        <button class="btn btn-primary mt-2" onclick="openCreateProjectModal()">
+                            Create Project
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = projects.map(project => `
+                <div class="project-card" onclick="viewProject(${project.id})">
+                    <div class="project-header">
+                        <div>
+                            <h3>${project.name}</h3>
+                            <p class="text-sm text-tertiary">${project.description || 'No description'}</p>
+                        </div>
+                        <span class="project-status status-${project.status}">${project.status}</span>
+                    </div>
+                    <div class="project-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">${project.order_count || 0}</div>
+                            <div class="stat-label">Orders</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">€${parseFloat(project.total_spent || 0).toFixed(2)}</div>
+                            <div class="stat-label">Spent</div>
+                        </div>
+                    </div>
+                    ${project.budget ? `<div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                        <div class="text-sm text-tertiary">Budget: €${parseFloat(project.budget).toFixed(2)}</div>
+                    </div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        async function viewProject(id) {
+            currentProjectId = id;
+            const project = projects.find(p => p.id === id);
+            if (!project) return;
+
+            // Load project orders
+            let orders = [];
+            try {
+                const token = localStorage.getItem('cocreate_token');
+                const response = await fetch(`${API_BASE_URL}/projects/${id}/orders/`, {
+                    headers: {
+                        'Authorization': token ? `Token ${token}` : '',
+                    }
+                });
+
+                if (response.ok) {
+                    orders = await response.json();
+                } else {
+                    orders = getMockOrders(id);
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                orders = getMockOrders(id);
+            }
+
+            const detailContent = document.getElementById('project-detail-content');
+            detailContent.innerHTML = `
+                <div class="project-detail-header">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div>
+                            <h1>${project.name}</h1>
+                            <p class="text-tertiary">${project.description || 'No description'}</p>
+                        </div>
+                        <div>
+                            <span class="project-status status-${project.status}">${project.status}</span>
+                            <button class="btn btn-sm btn-outline ml-2" onclick="editProject(${project.id})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2rem;">
+                        <div>
+                            <div class="text-sm text-tertiary">Budget</div>
+                            <div class="text-xl font-bold">€${parseFloat(project.budget || 0).toFixed(2)}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-tertiary">Total Spent</div>
+                            <div class="text-xl font-bold">€${parseFloat(project.total_spent || 0).toFixed(2)}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-tertiary">Orders</div>
+                            <div class="text-xl font-bold">${project.order_count || 0}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="orders-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h2>Orders</h2>
+                        <button class="btn btn-primary" onclick="window.location.href='browse.html?project=${project.id}'">
+                            <i class="fas fa-shopping-cart"></i> Add Order
+                        </button>
+                    </div>
+
+                    ${orders.length === 0 ? `
+                        <div class="empty-state">
+                            <i class="fas fa-shopping-bag" style="font-size: 4rem; margin-bottom: 1rem; color: var(--text-tertiary);"></i>
+                            <h3>No orders yet</h3>
+                            <p>Start shopping to add orders to this project</p>
+                            <button class="btn btn-primary mt-2" onclick="window.location.href='browse.html?project=${project.id}'">
+                                Browse Materials
+                            </button>
+                        </div>
+                    ` : orders.map(order => `
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div>
+                                    <h4>Order #${order.id}</h4>
+                                    <div class="text-sm text-tertiary">${formatDate(order.created_at)}</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-xl font-bold">€${parseFloat(order.total_amount).toFixed(2)}</div>
+                                    <span class="badge badge-${getDeliveryStatusColor(order.delivery_status)}">${order.delivery_status}</span>
+                                </div>
+                            </div>
+                            <div class="order-items">
+                                ${order.items.map(item => `
+                                    <div class="order-item">
+                                        <span>${item.quantity}x ${item.product_title}</span>
+                                        <span class="font-bold">€${parseFloat(item.subtotal).toFixed(2)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            document.getElementById('projects-list-view').classList.remove('active');
+            document.getElementById('project-detail-view').classList.add('active');
+        }
+
+        function showProjectsList() {
+            document.getElementById('projects-list-view').classList.add('active');
+            document.getElementById('project-detail-view').classList.remove('active');
+            currentProjectId = null;
+        }
+
+        function openCreateProjectModal() {
+            document.getElementById('modal-title').textContent = 'Create Project';
+            document.getElementById('project-form').reset();
+            document.getElementById('project-id').value = '';
+            document.getElementById('project-status').value = 'planning';
+            document.getElementById('project-modal').style.display = 'block';
+        }
+
+        function closeProjectModal() {
+            document.getElementById('project-modal').style.display = 'none';
+        }
+
+        function editProject(id) {
+            const project = projects.find(p => p.id === id);
+            if (!project) return;
+
+            document.getElementById('modal-title').textContent = 'Edit Project';
+            document.getElementById('project-id').value = project.id;
+            document.getElementById('project-name').value = project.name;
+            document.getElementById('project-description').value = project.description || '';
+            document.getElementById('project-budget').value = project.budget || '';
+            document.getElementById('project-status').value = project.status;
+            document.getElementById('project-modal').style.display = 'block';
+        }
+
+        async function saveProject(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const projectData = {
+                name: formData.get('name'),
+                description: formData.get('description') || '',
+                budget: formData.get('budget') || null,
+                status: formData.get('status')
+            };
+
+            const projectId = formData.get('id');
+            const url = projectId ? `${API_BASE_URL}/projects/${projectId}/` : `${API_BASE_URL}/projects/`;
+            const method = projectId ? 'PUT' : 'POST';
+
+            try {
+                const token = localStorage.getItem('cocreate_token');
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token ? `Token ${token}` : '',
+                    },
+                    body: JSON.stringify(projectData)
+                });
+
+                if (response.ok) {
+                    closeProjectModal();
+                    loadProjects();
+                    showNotification('Project saved successfully!', 'success');
+                } else {
+                    showNotification('Error saving project', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving project:', error);
+                // Fallback: add to mock data
+                if (!projectId) {
+                    projects.push({ ...projectData, id: Date.now(), total_spent: '0.00', order_count: 0, created_at: new Date().toISOString() });
+                } else {
+                    const index = projects.findIndex(p => p.id == projectId);
+                    if (index !== -1) {
+                        projects[index] = { ...projects[index], ...projectData };
+                    }
+                }
+                closeProjectModal();
+                renderProjects();
+                showNotification('Project saved successfully!', 'success');
+            }
+        }
+
+        function getMockOrders(projectId) {
+            return [
+                {
+                    id: 1,
+                    total_amount: '395.00',
+                    delivery_status: 'pending',
+                    created_at: '2024-12-12T10:00:00Z',
+                    items: [
+                        { product_title: 'Premium Oak Hardwood Flooring', quantity: 10, subtotal: '350.00' }
+                    ]
+                },
+                {
+                    id: 2,
+                    total_amount: '101.70',
+                    delivery_status: 'delivered',
+                    created_at: '2024-11-20T14:30:00Z',
+                    items: [
+                        { product_title: 'Schneider Electric Circuit Breakers', quantity: 5, subtotal: '60.00' },
+                        { product_title: 'Heavy Duty Power Cable', quantity: 20, subtotal: '30.00' }
+                    ]
+                }
+            ].filter(o => projectId === 1); // Mock: only show orders for project 1
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function getDeliveryStatusColor(status) {
+            const colors = {
+                'pending': 'warning',
+                'processing': 'info',
+                'shipped': 'info',
+                'delivered': 'success',
+                'ready_for_pickup': 'success'
+            };
+            return colors[status] || 'info';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('project-modal');
+            if (event.target === modal) {
+                closeProjectModal();
+            }
+        }
+    </script>
+</body>
+
+</html>
+

@@ -1,5 +1,8 @@
 from rest_framework import serializers
-from .models import Category, Product, ProductImage, Order, OrderItem, Cart, CartItem, Wishlist
+from .models import (
+    Category, Product, ProductImage, Order, OrderItem, Cart, CartItem, Wishlist,
+    Project, ProductAlert, Kit
+)
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -73,11 +76,12 @@ class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
     buyer_name = serializers.CharField(source='buyer.username', read_only=True)
     seller_name = serializers.CharField(source='seller.username', read_only=True)
+    project_name = serializers.CharField(source='project.name', read_only=True, allow_null=True)
     
     class Meta:
         model = Order
         fields = [
-            'id', 'buyer', 'buyer_name', 'seller', 'seller_name',
+            'id', 'buyer', 'buyer_name', 'seller', 'seller_name', 'project', 'project_name',
             'total_amount', 'tax_amount', 'delivery_method', 'delivery_status',
             'escrow_status', 'items', 'created_at', 'updated_at'
         ]
@@ -87,6 +91,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderCreateSerializer(serializers.Serializer):
     """Serializer for creating orders with items."""
     seller = serializers.IntegerField()
+    project = serializers.IntegerField(required=False, allow_null=True)
     delivery_method = serializers.ChoiceField(choices=Order.DELIVERY_CHOICES)
     items = serializers.ListField(
         child=serializers.DictField(
@@ -129,10 +134,18 @@ class OrderCreateSerializer(serializers.Serializer):
         # Calculate tax (example: 21% VAT)
         tax_amount = total_amount * Decimal('0.21')
         
+        # Get project if provided
+        project_id = validated_data.pop('project', None)
+        project = None
+        if project_id:
+            from .models import Project
+            project = Project.objects.filter(id=project_id, buyer=buyer).first()
+        
         # Create order
         order = Order.objects.create(
             buyer=buyer,
             seller_id=seller_id,
+            project=project,
             total_amount=total_amount,
             tax_amount=tax_amount,
             **validated_data
@@ -182,3 +195,51 @@ class WishlistSerializer(serializers.ModelSerializer):
         model = Wishlist
         fields = ['id', 'product', 'product_details', 'saved_at']
         read_only_fields = ['saved_at']
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+    """Serializer for buyer projects."""
+    total_spent = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    order_count = serializers.IntegerField(read_only=True)
+    buyer_name = serializers.CharField(source='buyer.username', read_only=True)
+    
+    class Meta:
+        model = Project
+        fields = [
+            'id', 'buyer', 'buyer_name', 'name', 'description', 'budget',
+            'status', 'total_spent', 'order_count', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['buyer', 'created_at', 'updated_at']
+
+
+class ProductAlertSerializer(serializers.ModelSerializer):
+    """Serializer for product alerts."""
+    category_name = serializers.CharField(source='category.name', read_only=True, allow_null=True)
+    
+    class Meta:
+        model = ProductAlert
+        fields = [
+            'id', 'user', 'keywords', 'category', 'category_name',
+            'max_price', 'condition', 'location_name', 'location_lat',
+            'location_long', 'radius_km', 'notification_frequency',
+            'is_active', 'last_notified_at', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['user', 'last_notified_at', 'created_at', 'updated_at']
+
+
+class KitSerializer(serializers.ModelSerializer):
+    """Serializer for limited-time kits."""
+    is_available = serializers.BooleanField(read_only=True)
+    savings_percentage = serializers.IntegerField(read_only=True)
+    kit_type_display = serializers.CharField(source='get_kit_type_display', read_only=True)
+    
+    class Meta:
+        model = Kit
+        fields = [
+            'id', 'kit_type', 'kit_type_display', 'title', 'description',
+            'start_date', 'end_date', 'quantity_available', 'quantity_sold',
+            'price', 'market_price', 'savings_percentage', 'location_name',
+            'location_lat', 'location_long', 'status', 'specifications',
+            'views', 'saves', 'is_available', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['views', 'saves', 'created_at', 'updated_at']

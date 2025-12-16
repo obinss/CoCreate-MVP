@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import Category, Product, ProductImage, Order, OrderItem, Cart, CartItem, Wishlist
+from .models import (
+    Category, Product, ProductImage, Order, OrderItem, Cart, CartItem, Wishlist,
+    Project, ProductAlert, Kit
+)
 
 
 class ProductImageInline(admin.TabularInline):
@@ -82,15 +85,15 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'buyer', 'seller', 'total_amount', 'delivery_method', 'delivery_status', 'escrow_status', 'created_at']
+    list_display = ['id', 'buyer', 'seller', 'project', 'total_amount', 'delivery_method', 'delivery_status', 'escrow_status', 'created_at']
     list_filter = ['delivery_status', 'escrow_status', 'delivery_method', 'created_at']
-    search_fields = ['buyer__username', 'seller__username']
+    search_fields = ['buyer__username', 'seller__username', 'project__name']
     readonly_fields = ['created_at', 'updated_at']
     inlines = [OrderItemInline]
     
     fieldsets = (
         ('Parties', {
-            'fields': ('buyer', 'seller')
+            'fields': ('buyer', 'seller', 'project')
         }),
         ('Order Details', {
             'fields': ('total_amount', 'tax_amount')
@@ -130,3 +133,78 @@ class WishlistAdmin(admin.ModelAdmin):
     list_filter = ['saved_at']
     search_fields = ['user__username', 'product__title']
     readonly_fields = ['saved_at']
+
+
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
+    list_display = ['name', 'buyer', 'status', 'budget', 'total_spent', 'order_count', 'created_at']
+    list_filter = ['status', 'created_at']
+    search_fields = ['name', 'description', 'buyer__username']
+    readonly_fields = ['total_spent', 'order_count', 'created_at', 'updated_at']
+    
+    fieldsets = (
+        ('Project Information', {
+            'fields': ('buyer', 'name', 'description', 'status', 'budget')
+        }),
+        ('Statistics', {
+            'fields': ('total_spent', 'order_count')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at')
+        }),
+    )
+
+
+@admin.register(ProductAlert)
+class ProductAlertAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'keywords', 'category', 'max_price', 'location_name', 'radius_km', 'is_active', 'created_at']
+    list_filter = ['is_active', 'notification_frequency', 'created_at']
+    search_fields = ['user__username', 'keywords', 'location_name']
+    readonly_fields = ['last_notified_at', 'created_at', 'updated_at']
+    
+    fieldsets = (
+        ('User', {
+            'fields': ('user',)
+        }),
+        ('Alert Criteria', {
+            'fields': ('keywords', 'category', 'max_price', 'condition')
+        }),
+        ('Location Filter', {
+            'fields': ('location_name', 'location_lat', 'location_long', 'radius_km')
+        }),
+        ('Notification Settings', {
+            'fields': ('notification_frequency', 'is_active', 'last_notified_at')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at')
+        }),
+    )
+
+
+@admin.register(Kit)
+class KitAdmin(admin.ModelAdmin):
+    list_display = ['title', 'kit_type', 'status', 'price', 'quantity_available', 'quantity_sold', 'start_date', 'end_date', 'is_available']
+    list_filter = ['kit_type', 'status', 'start_date', 'end_date']
+    search_fields = ['title', 'description']
+    readonly_fields = ['views', 'saves', 'savings_percentage', 'is_available', 'created_at', 'updated_at']
+    
+    fieldsets = (
+        ('Kit Information', {
+            'fields': ('kit_type', 'title', 'description', 'status')
+        }),
+        ('Availability', {
+            'fields': ('start_date', 'end_date', 'quantity_available', 'quantity_sold', 'is_available')
+        }),
+        ('Pricing', {
+            'fields': ('price', 'market_price', 'savings_percentage')
+        }),
+        ('Location', {
+            'fields': ('location_name', 'location_lat', 'location_long')
+        }),
+        ('Specifications', {
+            'fields': ('specifications',)
+        }),
+        ('Metadata', {
+            'fields': ('views', 'saves', 'created_at', 'updated_at')
+        }),
+    )

@@ -130,6 +130,7 @@ class Order(models.Model):
     
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='purchases')
     seller = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='sales')
+    project = models.ForeignKey('Project', on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     
     # Order details
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -221,3 +222,165 @@ class Wishlist(models.Model):
     class Meta:
         db_table = 'wishlist'
         unique_together = ['user', 'product']
+
+
+class Project(models.Model):
+    """Buyer projects to organize orders and materials."""
+    
+    STATUS_CHOICES = [
+        ('planning', 'Planning'),
+        ('active', 'Active'),
+        ('on_hold', 'On Hold'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+    
+    buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='projects')
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    budget = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='planning')
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.name} - {self.buyer.username}"
+    
+    @property
+    def total_spent(self):
+        """Calculate total spent on this project."""
+        return sum(order.total_amount for order in self.orders.all())
+    
+    @property
+    def order_count(self):
+        """Get number of orders in this project."""
+        return self.orders.count()
+    
+    class Meta:
+        db_table = 'projects'
+        ordering = ['-created_at']
+
+
+class ProductAlert(models.Model):
+    """Buyer alerts for specific products within a region."""
+    
+    NOTIFICATION_FREQUENCY_CHOICES = [
+        ('instant', 'Instant'),
+        ('daily', 'Daily Digest'),
+        ('weekly', 'Weekly Digest'),
+    ]
+    
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='product_alerts')
+    
+    # Alert criteria
+    keywords = models.CharField(max_length=255, blank=True, help_text="Search keywords")
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='alerts')
+    max_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    condition = models.CharField(max_length=20, choices=Product.CONDITION_CHOICES, blank=True)
+    
+    # Location filter
+    location_name = models.CharField(max_length=100, blank=True)
+    location_lat = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    location_long = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    radius_km = models.IntegerField(default=50, help_text="Search radius in kilometers")
+    
+    # Notification settings
+    notification_frequency = models.CharField(max_length=20, choices=NOTIFICATION_FREQUENCY_CHOICES, default='instant')
+    is_active = models.BooleanField(default=True)
+    last_notified_at = models.DateTimeField(null=True, blank=True)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Alert: {self.keywords or self.category} - {self.user.username}"
+    
+    class Meta:
+        db_table = 'product_alerts'
+        ordering = ['-created_at']
+
+
+class Kit(models.Model):
+    """Limited-time niche kits from construction site excess materials."""
+    
+    KIT_TYPE_CHOICES = [
+        ('thermal_shell', 'Thermal Shell Pack'),
+        ('stone_bbq', 'Stone BBQ Station'),
+        ('herringbone_deck', 'Herringbone Deck Pack'),
+        ('industrial_shelving', 'Industrial Shelving Unit'),
+        ('privacy_screen', 'Privacy Screen Kit'),
+        ('green_wall', 'Green Wall Trellis Kit'),
+        ('instant_path', 'Instant Path Aggregate Pack'),
+        ('acoustic_pack', 'Silent Office Acoustic Pack'),
+        ('garage_rail', 'Heavy Duty Garage Rail'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('upcoming', 'Upcoming'),
+        ('active', 'Active'),
+        ('sold_out', 'Sold Out'),
+        ('ended', 'Ended'),
+    ]
+    
+    kit_type = models.CharField(max_length=50, choices=KIT_TYPE_CHOICES)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    
+    # Limited-time availability
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    
+    # Inventory
+    quantity_available = models.IntegerField(default=0)
+    quantity_sold = models.IntegerField(default=0)
+    
+    # Pricing
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    market_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    # Location
+    location_name = models.CharField(max_length=100)
+    location_lat = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    location_long = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    
+    # Status
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='upcoming')
+    
+    # Kit specifications (stored as JSON-like text or separate fields)
+    specifications = models.TextField(blank=True, help_text="Kit contents and specifications")
+    
+    # Metadata
+    views = models.IntegerField(default=0)
+    saves = models.IntegerField(default=0)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.title
+    
+    @property
+    def is_available(self):
+        """Check if kit is currently available."""
+        from django.utils import timezone
+        now = timezone.now()
+        return (
+            self.status == 'active' and
+            self.start_date <= now <= self.end_date and
+            self.quantity_available > 0
+        )
+    
+    @property
+    def savings_percentage(self):
+        """Calculate savings percentage vs market price."""
+        if self.market_price and self.market_price > 0:
+            return round(((self.market_price - self.price) / self.market_price) * 100)
+        return 0
+    
+    class Meta:
+        db_table = 'kits'
+        ordering = ['-created_at']
