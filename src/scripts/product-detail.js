@@ -173,8 +173,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 Add to Cart
                             </button>
                             <button class="btn btn-ghost purchase-btn-contact"
-                                    onclick="showNotification('Messenger not implemented yet', 'info')">
+                                    onclick="window.location.href='chat.html'">
                                 <i class="fas fa-comment"></i> Contact Seller
+                            </button>
+                            <button class="btn btn-ghost purchase-btn-contact" style="color: var(--color-error);"
+                                    onclick="flagProduct('${product.id}')">
+                                <i class="fas fa-flag"></i> Report Product
                             </button>
                         ` : `
                             <div class="alert alert-info login-required-alert">
@@ -224,4 +228,39 @@ function handleAddToCart(productId) {
 function handleBuyNow(productId) {
     handleAddToCart(productId);
     window.location.href = 'cart.html';
+}
+
+function flagProduct(productId) {
+    const product = window.PRODUCTS.find(p => p.id === productId);
+    if (!product) return;
+
+    const reason = prompt('Why are you flagging this product?\n\n1. Fraudulent Activity\n2. Misleading Information\n3. Inappropriate Content\n4. Spam\n5. Wrong Category\n6. Duplicate Listing\n7. Other\n\nEnter reason number:');
+    
+    if (!reason) return;
+
+    const reasons = {
+        '1': 'fraudulent',
+        '2': 'misleading',
+        '3': 'inappropriate',
+        '4': 'spam',
+        '5': 'wrong_category',
+        '6': 'duplicate',
+        '7': 'other'
+    };
+
+    const description = prompt('Please provide details about why you are flagging this product:');
+    if (!description) return;
+
+    // In a real app, this would send to API
+    console.log('Flagging product:', {
+        productId,
+        reason: reasons[reason] || 'other',
+        description
+    });
+
+    if (typeof showNotification === 'function') {
+        showNotification('Product flagged. Our team will review it shortly.', 'success');
+    } else {
+        alert('Product flagged. Our team will review it shortly.');
+    }
 }

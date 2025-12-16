@@ -130,6 +130,7 @@ class Order(models.Model):
     
     buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='purchases')
     seller = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name='sales')
+    project = models.ForeignKey('Project', on_delete=models.SET_NULL, null=True, blank=True, related_name='orders')
     
     # Order details
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -221,3 +222,277 @@ class Wishlist(models.Model):
     class Meta:
         db_table = 'wishlist'
         unique_together = ['user', 'product']
+
+
+class Project(models.Model):
+    """Buyer projects to organize orders and materials."""
+    
+    STATUS_CHOICES = [
+        ('planning', 'Planning'),
+        ('active', 'Active'),
+        ('on_hold', 'On Hold'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+    
+    buyer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='projects')
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    budget = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='planning')
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.name} - {self.buyer.username}"
+    
+    @property
+    def total_spent(self):
+        """Calculate total spent on this project."""
+        return sum(order.total_amount for order in self.orders.all())
+    
+    @property
+    def order_count(self):
+        """Get number of orders in this project."""
+        return self.orders.count()
+    
+    class Meta:
+        db_table = 'projects'
+        ordering = ['-created_at']
+
+
+class ProductAlert(models.Model):
+    """Buyer alerts for specific products within a region."""
+    
+    NOTIFICATION_FREQUENCY_CHOICES = [
+        ('instant', 'Instant'),
+        ('daily', 'Daily Digest'),
+        ('weekly', 'Weekly Digest'),
+    ]
+    
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='product_alerts')
+    
+    # Alert criteria
+    keywords = models.CharField(max_length=255, blank=True, help_text="Search keywords")
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name='alerts')
+    max_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    condition = models.CharField(max_length=20, choices=Product.CONDITION_CHOICES, blank=True)
+    
+    # Location filter
+    location_name = models.CharField(max_length=100, blank=True)
+    location_lat = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    location_long = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    radius_km = models.IntegerField(default=50, help_text="Search radius in kilometers")
+    
+    # Notification settings
+    notification_frequency = models.CharField(max_length=20, choices=NOTIFICATION_FREQUENCY_CHOICES, default='instant')
+    is_active = models.BooleanField(default=True)
+    last_notified_at = models.DateTimeField(null=True, blank=True)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Alert: {self.keywords or self.category} - {self.user.username}"
+    
+    class Meta:
+        db_table = 'product_alerts'
+        ordering = ['-created_at']
+
+
+class Kit(models.Model):
+    """Limited-time niche kits from construction site excess materials."""
+    
+    KIT_TYPE_CHOICES = [
+        ('thermal_shell', 'Thermal Shell Pack'),
+        ('stone_bbq', 'Stone BBQ Station'),
+        ('herringbone_deck', 'Herringbone Deck Pack'),
+        ('industrial_shelving', 'Industrial Shelving Unit'),
+        ('privacy_screen', 'Privacy Screen Kit'),
+        ('green_wall', 'Green Wall Trellis Kit'),
+        ('instant_path', 'Instant Path Aggregate Pack'),
+        ('acoustic_pack', 'Silent Office Acoustic Pack'),
+        ('garage_rail', 'Heavy Duty Garage Rail'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('upcoming', 'Upcoming'),
+        ('active', 'Active'),
+        ('sold_out', 'Sold Out'),
+        ('ended', 'Ended'),
+    ]
+    
+    kit_type = models.CharField(max_length=50, choices=KIT_TYPE_CHOICES)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    
+    # Limited-time availability
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    
+    # Inventory
+    quantity_available = models.IntegerField(default=0)
+    quantity_sold = models.IntegerField(default=0)
+    
+    # Pricing
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    market_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    # Location
+    location_name = models.CharField(max_length=100)
+    location_lat = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    location_long = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    
+    # Status
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='upcoming')
+    
+    # Kit specifications (stored as JSON-like text or separate fields)
+    specifications = models.TextField(blank=True, help_text="Kit contents and specifications")
+    
+    # Metadata
+    views = models.IntegerField(default=0)
+    saves = models.IntegerField(default=0)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.title
+    
+    @property
+    def is_available(self):
+        """Check if kit is currently available."""
+        from django.utils import timezone
+        now = timezone.now()
+        return (
+            self.status == 'active' and
+            self.start_date <= now <= self.end_date and
+            self.quantity_available > 0
+        )
+    
+    @property
+    def savings_percentage(self):
+        """Calculate savings percentage vs market price."""
+        if self.market_price and self.market_price > 0:
+            return round(((self.market_price - self.price) / self.market_price) * 100)
+        return 0
+    
+    class Meta:
+        db_table = 'kits'
+        ordering = ['-created_at']
+
+
+class Flag(models.Model):
+    """Flags/reports for products, orders, or users."""
+    
+    FLAG_TYPE_CHOICES = [
+        ('product', 'Product Listing'),
+        ('order', 'Order/Sale'),
+        ('user', 'User Account'),
+    ]
+    
+    REASON_CHOICES = [
+        ('fraudulent', 'Fraudulent Activity'),
+        ('misleading', 'Misleading Information'),
+        ('inappropriate', 'Inappropriate Content'),
+        ('spam', 'Spam'),
+        ('wrong_category', 'Wrong Category'),
+        ('duplicate', 'Duplicate Listing'),
+        ('other', 'Other'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('pending', 'Pending Review'),
+        ('reviewing', 'Under Review'),
+        ('resolved', 'Resolved'),
+        ('dismissed', 'Dismissed'),
+    ]
+    
+    flagger = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='flags_created')
+    flag_type = models.CharField(max_length=20, choices=FLAG_TYPE_CHOICES)
+    reason = models.CharField(max_length=30, choices=REASON_CHOICES)
+    description = models.TextField(help_text="Detailed explanation of the flag")
+    
+    # Related objects (one will be set)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True, related_name='flags')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True, related_name='flags')
+    flagged_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='flags_received')
+    
+    # Admin handling
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    reviewed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='flags_reviewed')
+    admin_notes = models.TextField(blank=True)
+    resolved_at = models.DateTimeField(null=True, blank=True)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Flag #{self.id} - {self.get_flag_type_display()} - {self.get_reason_display()}"
+    
+    class Meta:
+        db_table = 'flags'
+        ordering = ['-created_at']
+
+
+class Dispute(models.Model):
+    """Disputes for orders requiring conflict resolution."""
+    
+    DISPUTE_REASON_CHOICES = [
+        ('item_not_received', 'Item Not Received'),
+        ('item_damaged', 'Item Damaged/Defective'),
+        ('item_not_as_described', 'Item Not As Described'),
+        ('wrong_item', 'Wrong Item Received'),
+        ('quantity_mismatch', 'Quantity Mismatch'),
+        ('payment_issue', 'Payment Issue'),
+        ('other', 'Other'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('open', 'Open'),
+        ('under_review', 'Under Review'),
+        ('buyer_favored', 'Resolved - Buyer Favored'),
+        ('seller_favored', 'Resolved - Seller Favored'),
+        ('partial_refund', 'Resolved - Partial Refund'),
+        ('closed', 'Closed'),
+    ]
+    
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='disputes')
+    raised_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='disputes_raised')
+    
+    reason = models.CharField(max_length=30, choices=DISPUTE_REASON_CHOICES)
+    description = models.TextField(help_text="Detailed explanation of the dispute")
+    
+    # Evidence
+    buyer_evidence = models.TextField(blank=True, help_text="Buyer's evidence/notes")
+    seller_evidence = models.TextField(blank=True, help_text="Seller's evidence/notes")
+    
+    # Resolution
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='open')
+    resolved_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='disputes_resolved')
+    resolution_notes = models.TextField(blank=True)
+    refund_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    resolved_at = models.DateTimeField(null=True, blank=True)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Dispute #{self.id} - Order #{self.order.id} - {self.get_status_display()}"
+    
+    @property
+    def other_party(self):
+        """Get the other party in the dispute."""
+        if self.raised_by == self.order.buyer:
+            return self.order.seller
+        return self.order.buyer
+    
+    class Meta:
+        db_table = 'disputes'
+        ordering = ['-created_at']

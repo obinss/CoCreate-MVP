@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CoCreate</title>
+
+    <!-- Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="src/styles/index.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/pages.css">
+    <link rel="stylesheet" href="src/styles/mobile.css">
+    <style>
+        .admin-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .admin-header {
+            margin-bottom: 2rem;
+        }
+
+        .admin-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .admin-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            margin-bottom: -2px;
+        }
+
+        .admin-tab:hover {
+            color: var(--primary-color);
+        }
+
+        .admin-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card-label {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card-change {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .stat-card-change.positive {
+            color: var(--color-success);
+        }
+
+        .stat-card-change.negative {
+            color: var(--color-error);
+        }
+
+        .admin-table-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th {
+            text-align: left;
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .admin-table tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+        }
+
+        .status-approved {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon.approve {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .btn-icon.approve:hover {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .btn-icon.reject {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+        }
+
+        .btn-icon.reject:hover {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .btn-icon.delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+        }
+
+        .btn-icon.delete:hover {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar select,
+        .filter-bar input {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-tertiary);
+            padding: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .dispute-details {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .dispute-details h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .dispute-evidence {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <div class="admin-container section">
+        <div class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <p class="text-tertiary">Manage platform users, products, and orders</p>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-card-value" id="total-users">0</div>
+                        <div class="stat-card-label">Total Users</div>
+                    </div>
+                    <div class="stat-card-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-card-change positive">
+                    <i class="fas fa-arrow-up"></i> +12% this month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-card-value" id="total-products">0</div>
+                        <div class="stat-card-label">Active Products</div>
+                    </div>
+                    <div class="stat-card-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+                <div class="stat-card-change positive">
+                    <i class="fas fa-arrow-up"></i> +8% this month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-card-value" id="total-orders">0</div>
+                        <div class="stat-card-label">Total Orders</div>
+                    </div>
+                    <div class="stat-card-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                </div>
+                <div class="stat-card-change positive">
+                    <i class="fas fa-arrow-up"></i> +15% this month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-card-value" id="pending-verifications">0</div>
+                        <div class="stat-card-label">Pending Verifications</div>
+                    </div>
+                    <div class="stat-card-icon" style="background: linear-gradient(135deg, #fa709a, #fee140);">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                </div>
+                <div class="stat-card-change">
+                    Requires attention
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-card-value" id="total-revenue">€0</div>
+                        <div class="stat-card-label">Platform Revenue</div>
+                    </div>
+                    <div class="stat-card-icon" style="background: linear-gradient(135deg, #30cfd0, #330867);">
+                        <i class="fas fa-euro-sign"></i>
+                    </div>
+                </div>
+                <div class="stat-card-change positive">
+                    <i class="fas fa-arrow-up"></i> +22% this month
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Tabs -->
+        <div class="admin-tabs">
+            <button class="admin-tab active" onclick="switchTab('users')">
+                <i class="fas fa-users"></i> Users
+            </button>
+            <button class="admin-tab" onclick="switchTab('sellers')">
+                <i class="fas fa-store"></i> Seller Verifications
+            </button>
+            <button class="admin-tab" onclick="switchTab('products')">
+                <i class="fas fa-box"></i> Products
+            </button>
+            <button class="admin-tab" onclick="switchTab('orders')">
+                <i class="fas fa-shopping-cart"></i> Orders
+            </button>
+            <button class="admin-tab" onclick="switchTab('kits')">
+                <i class="fas fa-gift"></i> Kits
+            </button>
+            <button class="admin-tab" onclick="switchTab('flags')">
+                <i class="fas fa-flag"></i> Flags <span class="badge badge-warning" id="flags-badge" style="margin-left: 0.5rem;">0</span>
+            </button>
+            <button class="admin-tab" onclick="switchTab('disputes')">
+                <i class="fas fa-gavel"></i> Disputes <span class="badge badge-error" id="disputes-badge" style="margin-left: 0.5rem;">0</span>
+            </button>
+            <button class="admin-tab" onclick="switchTab('reports')">
+                <i class="fas fa-chart-bar"></i> Reports
+            </button>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="tab-users" class="admin-content active">
+            <div class="admin-table-container">
+                <div class="filter-bar">
+                    <input type="text" class="search-box" placeholder="Search users..." id="user-search">
+                    <select id="user-role-filter">
+                        <option value="">All Roles</option>
+                        <option value="buyer">Buyer</option>
+                        <option value="seller">Seller</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <!-- Users will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Seller Verifications Tab -->
+        <div id="tab-sellers" class="admin-content">
+            <div class="admin-table-container">
+                <div class="filter-bar">
+                    <select id="seller-status-filter">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Business Name</th>
+                            <th>User</th>
+                            <th>Tax ID</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sellers-table-body">
+                        <!-- Sellers will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="tab-products" class="admin-content">
+            <div class="admin-table-container">
+                <div class="filter-bar">
+                    <input type="text" class="search-box" placeholder="Search products..." id="product-search">
+                    <select id="product-status-filter">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="sold">Sold</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Seller</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table-body">
+                        <!-- Products will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="tab-orders" class="admin-content">
+            <div class="admin-table-container">
+                <div class="filter-bar">
+                    <input type="text" class="search-box" placeholder="Search orders..." id="order-search">
+                    <select id="order-status-filter">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Buyer</th>
+                            <th>Seller</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body">
+                        <!-- Orders will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Kits Tab -->
+        <div id="tab-kits" class="admin-content">
+            <div class="admin-table-container">
+                <div class="filter-bar" style="justify-content: space-between;">
+                    <div style="display: flex; gap: 1rem;">
+                        <select id="kit-status-filter">
+                            <option value="">All Status</option>
+                            <option value="upcoming">Upcoming</option>
+                            <option value="active">Active</option>
+                            <option value="sold_out">Sold Out</option>
+                            <option value="ended">Ended</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="openCreateKitModal()">
+                        <i class="fas fa-plus"></i> Create New Kit
+                    </button>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Kit Title</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                            <th>Available</th>
+                            <th>Status</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kits-table-body">
+                        <!-- Kits will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Flags Tab -->
+        <div id="tab-flags" class="admin-content">
+            <div class="admin-table-container">
+                <div class="filter-bar">
+                    <select id="flag-status-filter">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending Review</option>
+                        <option value="reviewing">Under Review</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="dismissed">Dismissed</option>
+                    </select>
+                    <select id="flag-type-filter">
+                        <option value="">All Types</option>
+                        <option value="product">Product Listing</option>
+                        <option value="order">Order/Sale</option>
+                        <option value="user">User Account</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Flag ID</th>
+                            <th>Type</th>
+                            <th>Reason</th>
+                            <th>Flagged By</th>
+                            <th>Target</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="flags-table-body">
+                        <!-- Flags will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Disputes Tab -->
+        <div id="tab-disputes" class="admin-content">
+            <div class="admin-table-container">
+                <div class="filter-bar">
+                    <select id="dispute-status-filter">
+                        <option value="">All Status</option>
+                        <option value="open">Open</option>
+                        <option value="under_review">Under Review</option>
+                        <option value="buyer_favored">Buyer Favored</option>
+                        <option value="seller_favored">Seller Favored</option>
+                        <option value="partial_refund">Partial Refund</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Dispute ID</th>
+                            <th>Order ID</th>
+                            <th>Raised By</th>
+                            <th>Reason</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="disputes-table-body">
+                        <!-- Disputes will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="tab-reports" class="admin-content">
+            <div class="admin-table-container">
+                <h2 style="margin-bottom: 1.5rem;">Platform Analytics</h2>
+                <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div class="stat-card">
+                        <div class="stat-card-label">Monthly Active Users</div>
+                        <div class="stat-card-value">1,234</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">Total GMV</div>
+                        <div class="stat-card-value">€125,430</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">Average Order Value</div>
+                        <div class="stat-card-value">€245</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">Conversion Rate</div>
+                        <div class="stat-card-value">3.2%</div>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">Recent Activity</h3>
+                    <p class="text-tertiary">Analytics dashboard coming soon...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="src/utils/utils.js"></script>
+    <script src="src/utils/loadComponents.js"></script>
+    <script src="src/data/mockData.js"></script>
+    <script src="src/api/config.js"></script>
+    <script>
+        const API_BASE_URL = window.API_CONFIG?.baseURL || 'http://localhost:8000/api';
+
+        let users = [];
+        let products = [];
+        let orders = [];
+        let kits = [];
+        let flags = [];
+        let disputes = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const userData = localStorage.getItem('cocreate_user');
+            if (!userData) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const user = JSON.parse(userData);
+            if (user.role !== 'admin') {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            loadDashboardData();
+        });
+
+        async function loadDashboardData() {
+            // Load mock data
+            if (typeof window.USERS !== 'undefined') {
+                users = window.USERS;
+            } else {
+                users = getMockUsers();
+            }
+
+            if (typeof window.PRODUCTS !== 'undefined') {
+                products = window.PRODUCTS;
+            } else {
+                products = getMockProducts();
+            }
+
+            if (typeof window.ORDERS !== 'undefined') {
+                orders = window.ORDERS;
+            } else {
+                orders = getMockOrders();
+            }
+
+            kits = getMockKits();
+            flags = getMockFlags();
+            disputes = getMockDisputes();
+
+            updateStats();
+            renderUsers();
+            renderSellers();
+            renderProducts();
+            renderOrders();
+            renderKits();
+            renderFlags();
+            renderDisputes();
+        }
+
+        function getMockUsers() {
+            return [
+                { id: 'user_1', email: 'john.buyer@example.com', name: 'John Smith', role: 'buyer', createdAt: '2024-01-15' },
+                { id: 'user_2', email: 'maria.contractor@example.com', name: 'Maria Schmidt', role: 'buyer', isSeller: true, verificationStatus: 'approved', createdAt: '2023-06-10' },
+                { id: 'user_3', email: 'admin@cocreate.com', name: 'Admin User', role: 'admin', createdAt: '2023-01-01' },
+                { id: 'user_4', email: 'pending.seller@example.com', name: 'Thomas Müller', role: 'buyer', isSeller: true, verificationStatus: 'pending', businessName: 'Müller Renovations', taxId: 'DE987654321', createdAt: '2024-12-10' }
+            ];
+        }
+
+        function getMockProducts() {
+            return [
+                { id: 'prod_1', title: 'Premium Oak Hardwood Flooring', sellerId: 'user_2', category: 'Flooring', price: 35.00, status: 'active', createdAt: '2024-12-01' },
+                { id: 'prod_2', title: 'Copper Piping - 15mm', sellerId: 'user_2', category: 'Plumbing', price: 8.50, status: 'active', createdAt: '2024-12-05' },
+                { id: 'prod_3', title: 'Rockwool Insulation Rolls', sellerId: 'user_2', category: 'Insulation', price: 25.00, status: 'sold', createdAt: '2024-12-08' }
+            ];
+        }
+
+        function getMockOrders() {
+            return [
+                { id: 'order_1', buyerId: 'user_1', sellerId: 'user_2', totalAmount: 395.00, deliveryStatus: 'pending', createdAt: '2024-12-12T10:00:00' },
+                { id: 'order_2', buyerId: 'user_1', sellerId: 'user_2', totalAmount: 101.70, deliveryStatus: 'delivered', createdAt: '2024-11-20T14:30:00' }
+            ];
+        }
+
+        function getMockKits() {
+            return [
+                { id: 1, title: 'The Thermal Shell Pack', kit_type: 'thermal_shell', price: 225.00, quantity_available: 5, status: 'active', start_date: new Date().toISOString(), end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() },
+                { id: 2, title: 'The Chef\'s Outdoor Prep Station', kit_type: 'stone_bbq', price: 400.00, quantity_available: 2, status: 'active', start_date: new Date().toISOString(), end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() }
+            ];
+        }
+
+        function updateStats() {
+            document.getElementById('total-users').textContent = users.length;
+            document.getElementById('total-products').textContent = products.filter(p => p.status === 'active').length;
+            document.getElementById('total-orders').textContent = orders.length;
+            document.getElementById('pending-verifications').textContent = users.filter(u => u.isSeller && u.verificationStatus === 'pending').length;
+            
+            const totalRevenue = orders.reduce((sum, o) => sum + parseFloat(o.totalAmount || 0), 0);
+            document.getElementById('total-revenue').textContent = '€' + totalRevenue.toFixed(2);
+
+            // Update badges
+            const pendingFlags = flags.filter(f => f.status === 'pending').length;
+            const pendingDisputes = disputes.filter(d => d.status === 'open' || d.status === 'under_review').length;
+            
+            const flagsBadge = document.getElementById('flags-badge');
+            const disputesBadge = document.getElementById('disputes-badge');
+            
+            if (flagsBadge) flagsBadge.textContent = pendingFlags;
+            if (disputesBadge) disputesBadge.textContent = pendingDisputes;
+        }
+
+        function switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                if (tab.textContent.includes(tabName.charAt(0).toUpperCase() + tabName.slice(1)) || 
+                    tab.getAttribute('onclick')?.includes(tabName)) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+
+            // Update content
+            document.querySelectorAll('.admin-content').forEach(content => content.classList.remove('active'));
+            const targetTab = document.getElementById(`tab-${tabName}`);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = users.map(user => {
+                const sellerInfo = user.isSeller ? `<span class="badge badge-info">Seller</span>` : '';
+                return `
+                    <tr>
+                        <td>
+                            <strong>${user.name}</strong>
+                            ${sellerInfo}
+                        </td>
+                        <td>${user.email}</td>
+                        <td><span class="badge badge-info">${user.role}</span></td>
+                        <td>
+                            ${user.isSeller && user.verificationStatus ? 
+                                `<span class="status-badge status-${user.verificationStatus}">${user.verificationStatus}</span>` : 
+                                '<span class="status-badge status-approved">Active</span>'}
+                        </td>
+                        <td>${formatDate(user.createdAt)}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon delete" onclick="deleteUser('${user.id}')" title="Delete User">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderSellers() {
+            const sellers = users.filter(u => u.isSeller);
+            const tbody = document.getElementById('sellers-table-body');
+            
+            if (sellers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-tertiary);">No seller applications</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = sellers.map(user => `
+                <tr>
+                    <td><strong>${user.businessName || 'N/A'}</strong></td>
+                    <td>${user.name} (${user.email})</td>
+                    <td>${user.taxId || 'N/A'}</td>
+                    <td>
+                        <span class="status-badge status-${user.verificationStatus || 'pending'}">
+                            ${user.verificationStatus || 'pending'}
+                        </span>
+                    </td>
+                    <td>${formatDate(user.createdAt)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            ${user.verificationStatus === 'pending' ? `
+                                <button class="btn-icon approve" onclick="approveSeller('${user.id}')" title="Approve">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="btn-icon reject" onclick="rejectSeller('${user.id}')" title="Reject">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderProducts() {
+            const tbody = document.getElementById('products-table-body');
+            tbody.innerHTML = products.map(product => {
+                const seller = users.find(u => u.id === product.sellerId) || { name: 'Unknown' };
+                return `
+                    <tr>
+                        <td><strong>${product.title}</strong></td>
+                        <td>${seller.name}</td>
+                        <td>${product.category}</td>
+                        <td>€${parseFloat(product.price).toFixed(2)}</td>
+                        <td>
+                            <span class="status-badge status-${product.status === 'active' ? 'approved' : product.status === 'sold' ? 'rejected' : 'pending'}">
+                                ${product.status}
+                            </span>
+                        </td>
+                        <td>${formatDate(product.createdAt)}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon reject" onclick="flagItem('product', '${product.id}')" title="Flag Product">
+                                    <i class="fas fa-flag"></i>
+                                </button>
+                                <button class="btn-icon delete" onclick="deleteProduct('${product.id}')" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderOrders() {
+            const tbody = document.getElementById('orders-table-body');
+            tbody.innerHTML = orders.map(order => {
+                const buyer = users.find(u => u.id === order.buyerId) || { name: 'Unknown' };
+                const seller = users.find(u => u.id === order.sellerId) || { name: 'Unknown' };
+                return `
+                    <tr>
+                        <td><strong>#${order.id}</strong></td>
+                        <td>${buyer.name}</td>
+                        <td>${seller.name}</td>
+                        <td>€${parseFloat(order.totalAmount).toFixed(2)}</td>
+                        <td>
+                            <span class="status-badge status-${order.deliveryStatus === 'delivered' ? 'approved' : order.deliveryStatus === 'pending' ? 'pending' : 'approved'}">
+                                ${order.deliveryStatus}
+                            </span>
+                        </td>
+                        <td>${formatDate(order.createdAt)}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon reject" onclick="flagItem('order', '${order.id}')" title="Flag Order">
+                                    <i class="fas fa-flag"></i>
+                                </button>
+                                <button class="btn-icon" onclick="viewOrder('${order.id}')" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderKits() {
+            const tbody = document.getElementById('kits-table-body');
+            tbody.innerHTML = kits.map(kit => `
+                <tr>
+                    <td><strong>${kit.title}</strong></td>
+                    <td>${kit.kit_type.replace('_', ' ')}</td>
+                    <td>€${parseFloat(kit.price).toFixed(2)}</td>
+                    <td>${kit.quantity_available}</td>
+                    <td>
+                        <span class="status-badge status-${kit.status === 'active' ? 'approved' : kit.status === 'upcoming' ? 'pending' : 'rejected'}">
+                            ${kit.status}
+                        </span>
+                    </td>
+                    <td>${formatDate(kit.start_date)}</td>
+                    <td>${formatDate(kit.end_date)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon" onclick="editKit(${kit.id})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon delete" onclick="deleteKit(${kit.id})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function approveSeller(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+
+            if (confirm(`Approve seller verification for ${user.businessName || user.name}?`)) {
+                user.verificationStatus = 'approved';
+                user.isVerified = true;
+                renderSellers();
+                updateStats();
+                if (typeof showNotification === 'function') {
+                    showNotification('Seller approved successfully', 'success');
+                }
+            }
+        }
+
+        function rejectSeller(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+
+            if (confirm(`Reject seller verification for ${user.businessName || user.name}?`)) {
+                user.verificationStatus = 'rejected';
+                user.isSeller = false;
+                renderSellers();
+                updateStats();
+                if (typeof showNotification === 'function') {
+                    showNotification('Seller verification rejected', 'error');
+                }
+            }
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                users = users.filter(u => u.id !== userId);
+                renderUsers();
+                updateStats();
+                if (typeof showNotification === 'function') {
+                    showNotification('User deleted', 'success');
+                }
+            }
+        }
+
+        function deleteProduct(productId) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                products = products.filter(p => p.id !== productId);
+                renderProducts();
+                updateStats();
+                if (typeof showNotification === 'function') {
+                    showNotification('Product deleted', 'success');
+                }
+            }
+        }
+
+        function deleteKit(kitId) {
+            if (confirm('Are you sure you want to delete this kit?')) {
+                kits = kits.filter(k => k.id !== kitId);
+                renderKits();
+                if (typeof showNotification === 'function') {
+                    showNotification('Kit deleted', 'success');
+                }
+            }
+        }
+
+        function viewOrder(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                alert(`Order Details:\n\nID: ${order.id}\nAmount: €${order.totalAmount}\nStatus: ${order.deliveryStatus}`);
+            }
+        }
+
+        function editKit(kitId) {
+            const kit = kits.find(k => k.id === kitId);
+            if (kit) {
+                alert(`Edit kit: ${kit.title}\n\nThis would open an edit modal in a full implementation.`);
+            }
+        }
+
+        function getMockFlags() {
+            return [
+                {
+                    id: 1,
+                    flag_type: 'product',
+                    reason: 'misleading',
+                    flagger: { id: 'user_1', name: 'John Smith' },
+                    product: { id: 'prod_1', title: 'Premium Oak Hardwood Flooring' },
+                    status: 'pending',
+                    description: 'Product description does not match the actual condition',
+                    createdAt: '2024-12-15T10:00:00'
+                },
+                {
+                    id: 2,
+                    flag_type: 'order',
+                    reason: 'fraudulent',
+                    flagger: { id: 'user_1', name: 'John Smith' },
+                    order: { id: 'order_1' },
+                    status: 'reviewing',
+                    description: 'Seller not responding to messages',
+                    createdAt: '2024-12-14T14:30:00'
+                }
+            ];
+        }
+
+        function getMockDisputes() {
+            return [
+                {
+                    id: 1,
+                    order: { id: 'order_1', totalAmount: 395.00 },
+                    raised_by: { id: 'user_1', name: 'John Smith' },
+                    reason: 'item_not_as_described',
+                    status: 'open',
+                    description: 'Received different product than described',
+                    buyer_evidence: 'Photos showing the actual product received',
+                    seller_evidence: '',
+                    createdAt: '2024-12-13T09:00:00'
+                },
+                {
+                    id: 2,
+                    order: { id: 'order_2', totalAmount: 101.70 },
+                    raised_by: { id: 'user_1', name: 'John Smith' },
+                    reason: 'item_damaged',
+                    status: 'under_review',
+                    description: 'Items arrived damaged',
+                    buyer_evidence: 'Photos of damaged items',
+                    seller_evidence: 'Items were packed properly',
+                    createdAt: '2024-12-10T11:00:00'
+                }
+            ];
+        }
+
+        function renderFlags() {
+            const tbody = document.getElementById('flags-table-body');
+            
+            if (flags.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-tertiary);">No flags reported</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = flags.map(flag => {
+                const target = flag.product ? flag.product.title : 
+                              flag.order ? `Order #${flag.order.id}` : 
+                              flag.flagged_user ? flag.flagged_user.name : 'N/A';
+                
+                return `
+                    <tr>
+                        <td><strong>#${flag.id}</strong></td>
+                        <td><span class="badge badge-info">${flag.flag_type}</span></td>
+                        <td>${flag.reason.replace('_', ' ')}</td>
+                        <td>${flag.flagger.name}</td>
+                        <td>${target}</td>
+                        <td>
+                            <span class="status-badge status-${flag.status}">
+                                ${flag.status}
+                            </span>
+                        </td>
+                        <td>${formatDate(flag.createdAt)}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon" onclick="viewFlag(${flag.id})" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                ${flag.status === 'pending' ? `
+                                    <button class="btn-icon approve" onclick="resolveFlag(${flag.id}, 'resolved')" title="Resolve">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn-icon reject" onclick="resolveFlag(${flag.id}, 'dismissed')" title="Dismiss">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderDisputes() {
+            const tbody = document.getElementById('disputes-table-body');
+            
+            if (disputes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-tertiary);">No disputes</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = disputes.map(dispute => {
+                const order = orders.find(o => o.id === dispute.order.id) || dispute.order;
+                const buyer = users.find(u => u.id === order.buyerId) || { name: 'Unknown' };
+                const seller = users.find(u => u.id === order.sellerId) || { name: 'Unknown' };
+                
+                return `
+                    <tr>
+                        <td><strong>#${dispute.id}</strong></td>
+                        <td><strong>#${dispute.order.id}</strong></td>
+                        <td>${dispute.raised_by.name}</td>
+                        <td>${dispute.reason.replace(/_/g, ' ')}</td>
+                        <td>€${parseFloat(dispute.order.totalAmount).toFixed(2)}</td>
+                        <td>
+                            <span class="status-badge status-${dispute.status === 'open' ? 'pending' : dispute.status === 'under_review' ? 'pending' : 'approved'}">
+                                ${dispute.status.replace(/_/g, ' ')}
+                            </span>
+                        </td>
+                        <td>${formatDate(dispute.createdAt)}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn-icon" onclick="viewDispute(${dispute.id})" title="View & Resolve">
+                                    <i class="fas fa-gavel"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Update badge
+            const pendingDisputes = disputes.filter(d => d.status === 'open' || d.status === 'under_review').length;
+            document.getElementById('disputes-badge').textContent = pendingDisputes;
+        }
+
+        function flagItem(type, itemId) {
+            const modal = document.getElementById('flag-modal');
+            if (!modal) {
+                createFlagModal();
+            }
+            
+            document.getElementById('flag-type').value = type;
+            document.getElementById('flag-item-id').value = itemId;
+            document.getElementById('flag-modal').classList.add('active');
+        }
+
+        function createFlagModal() {
+            const modalHTML = `
+                <div id="flag-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Flag Item</h2>
+                            <button class="modal-close-btn" onclick="closeModal('flag-modal')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <form onsubmit="submitFlag(event)">
+                            <input type="hidden" id="flag-type">
+                            <input type="hidden" id="flag-item-id">
+                            <div class="form-group">
+                                <label for="flag-reason">Reason *</label>
+                                <select id="flag-reason" required>
+                                    <option value="">Select reason</option>
+                                    <option value="fraudulent">Fraudulent Activity</option>
+                                    <option value="misleading">Misleading Information</option>
+                                    <option value="inappropriate">Inappropriate Content</option>
+                                    <option value="spam">Spam</option>
+                                    <option value="wrong_category">Wrong Category</option>
+                                    <option value="duplicate">Duplicate Listing</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="flag-description">Description *</label>
+                                <textarea id="flag-description" required placeholder="Please provide details about why you are flagging this item..."></textarea>
+                            </div>
+                            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                                <button type="button" class="btn btn-outline" onclick="closeModal('flag-modal')">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Submit Flag</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function submitFlag(event) {
+            event.preventDefault();
+            const flagData = {
+                flag_type: document.getElementById('flag-type').value,
+                reason: document.getElementById('flag-reason').value,
+                description: document.getElementById('flag-description').value,
+                item_id: document.getElementById('flag-item-id').value
+            };
+
+            // Add to flags array
+            const newFlag = {
+                id: flags.length + 1,
+                ...flagData,
+                flagger: { id: 'admin', name: 'Admin' },
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+            flags.push(newFlag);
+            
+            closeModal('flag-modal');
+            renderFlags();
+            updateStats();
+            if (typeof showNotification === 'function') {
+                showNotification('Flag submitted successfully', 'success');
+            }
+        }
+
+        function viewFlag(flagId) {
+            const flag = flags.find(f => f.id === flagId);
+            if (!flag) return;
+
+            const modalHTML = `
+                <div id="flag-detail-modal" class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Flag Details #${flag.id}</h2>
+                            <button class="modal-close-btn" onclick="closeModal('flag-detail-modal')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="dispute-details">
+                            <h4>Flag Information</h4>
+                            <p><strong>Type:</strong> ${flag.flag_type}</p>
+                            <p><strong>Reason:</strong> ${flag.reason.replace('_', ' ')}</p>
+                            <p><strong>Status:</strong> <span class="status-badge status-${flag.status}">${flag.status}</span></p>
+                            <p><strong>Flagged By:</strong> ${flag.flagger.name}</p>
+                            <p><strong>Description:</strong> ${flag.description}</p>
+                        </div>
+                        ${flag.status === 'pending' ? `
+                            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                                <button class="btn btn-outline" onclick="resolveFlag(${flag.id}, 'dismissed')">Dismiss</button>
+                                <button class="btn btn-primary" onclick="resolveFlag(${flag.id}, 'resolved')">Resolve</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function resolveFlag(flagId, resolution) {
+            const flag = flags.find(f => f.id === flagId);
+            if (!flag) return;
+
+            if (confirm(`Mark this flag as ${resolution}?`)) {
+                flag.status = resolution;
+                flag.resolved_at = new Date().toISOString();
+                renderFlags();
+                closeModal('flag-detail-modal');
+                if (typeof showNotification === 'function') {
+                    showNotification(`Flag marked as ${resolution}`, 'success');
+                }
+            }
+        }
+
+        function viewDispute(disputeId) {
+            const dispute = disputes.find(d => d.id === disputeId);
+            if (!dispute) return;
+
+            const order = orders.find(o => o.id === dispute.order.id) || dispute.order;
+            const buyer = users.find(u => u.id === order.buyerId) || { name: 'Unknown' };
+            const seller = users.find(u => u.id === order.sellerId) || { name: 'Unknown' };
+
+            const modalHTML = `
+                <div id="dispute-detail-modal" class="modal active">
+                    <div class="modal-content" style="max-width: 900px;">
+                        <div class="modal-header">
+                            <h2>Dispute Resolution #${dispute.id}</h2>
+                            <button class="modal-close-btn" onclick="closeModal('dispute-detail-modal')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="dispute-details">
+                            <h4>Order Information</h4>
+                            <p><strong>Order ID:</strong> #${dispute.order.id}</p>
+                            <p><strong>Amount:</strong> €${parseFloat(dispute.order.totalAmount).toFixed(2)}</p>
+                            <p><strong>Buyer:</strong> ${buyer.name}</p>
+                            <p><strong>Seller:</strong> ${seller.name}</p>
+                            <p><strong>Reason:</strong> ${dispute.reason.replace(/_/g, ' ')}</p>
+                            <p><strong>Status:</strong> <span class="status-badge status-${dispute.status === 'open' ? 'pending' : 'approved'}">${dispute.status.replace(/_/g, ' ')}</span></p>
+                        </div>
+                        <div class="dispute-details">
+                            <h4>Dispute Description</h4>
+                            <p>${dispute.description}</p>
+                        </div>
+                        <div class="dispute-evidence">
+                            <h4>Buyer's Evidence</h4>
+                            <p>${dispute.buyer_evidence || 'No evidence provided'}</p>
+                        </div>
+                        ${dispute.seller_evidence ? `
+                            <div class="dispute-evidence">
+                                <h4>Seller's Response</h4>
+                                <p>${dispute.seller_evidence}</p>
+                            </div>
+                        ` : ''}
+                        ${dispute.status === 'open' || dispute.status === 'under_review' ? `
+                            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--border-color);">
+                                <h4 style="margin-bottom: 1rem;">Resolution</h4>
+                                <div class="form-group">
+                                    <label for="dispute-resolution">Resolution Decision *</label>
+                                    <select id="dispute-resolution" required>
+                                        <option value="">Select resolution</option>
+                                        <option value="buyer_favored">Favor Buyer (Full Refund)</option>
+                                        <option value="seller_favored">Favor Seller (No Refund)</option>
+                                        <option value="partial_refund">Partial Refund</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="refund-amount-group" style="display: none;">
+                                    <label for="refund-amount">Refund Amount (€)</label>
+                                    <input type="number" id="refund-amount" step="0.01" min="0" max="${dispute.order.totalAmount}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="resolution-notes">Resolution Notes</label>
+                                    <textarea id="resolution-notes" placeholder="Add notes about the resolution decision..."></textarea>
+                                </div>
+                                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                                    <button class="btn btn-outline" onclick="closeModal('dispute-detail-modal')">Cancel</button>
+                                    <button class="btn btn-primary" onclick="resolveDispute(${dispute.id})">Resolve Dispute</button>
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="dispute-evidence">
+                                <h4>Resolution</h4>
+                                <p><strong>Decision:</strong> ${dispute.status.replace(/_/g, ' ')}</p>
+                                ${dispute.refund_amount ? `<p><strong>Refund Amount:</strong> €${parseFloat(dispute.refund_amount).toFixed(2)}</p>` : ''}
+                                ${dispute.resolution_notes ? `<p><strong>Notes:</strong> ${dispute.resolution_notes}</p>` : ''}
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            // Show/hide refund amount field
+            const resolutionSelect = document.getElementById('dispute-resolution');
+            const refundGroup = document.getElementById('refund-amount-group');
+            if (resolutionSelect && refundGroup) {
+                resolutionSelect.addEventListener('change', function() {
+                    refundGroup.style.display = (this.value === 'partial_refund' || this.value === 'buyer_favored') ? 'block' : 'none';
+                    if (this.value === 'buyer_favored') {
+                        document.getElementById('refund-amount').value = dispute.order.totalAmount;
+                    }
+                });
+            }
+        }
+
+        function resolveDispute(disputeId) {
+            const dispute = disputes.find(d => d.id === disputeId);
+            if (!dispute) return;
+
+            const resolution = document.getElementById('dispute-resolution').value;
+            const notes = document.getElementById('resolution-notes').value;
+            const refundAmount = document.getElementById('refund-amount')?.value || null;
+
+            if (!resolution) {
+                alert('Please select a resolution decision');
+                return;
+            }
+
+            if (confirm(`Resolve this dispute as: ${resolution.replace(/_/g, ' ')}?`)) {
+                dispute.status = resolution;
+                dispute.resolution_notes = notes;
+                dispute.refund_amount = refundAmount ? parseFloat(refundAmount) : null;
+                dispute.resolved_at = new Date().toISOString();
+                
+                // Update order escrow status if needed
+                const order = orders.find(o => o.id === dispute.order.id);
+                if (order) {
+                    if (resolution === 'buyer_favored' || resolution === 'partial_refund') {
+                        order.escrow_status = 'refunded';
+                    } else {
+                        order.escrow_status = 'released';
+                    }
+                }
+
+                renderDisputes();
+                renderOrders();
+                closeModal('dispute-detail-modal');
+                if (typeof showNotification === 'function') {
+                    showNotification('Dispute resolved successfully', 'success');
+                }
+            }
+        }
+
+        function openCreateKitModal() {
+            const modalHTML = `
+                <div id="create-kit-modal" class="modal active">
+                    <div class="modal-content" style="max-width: 800px;">
+                        <div class="modal-header">
+                            <h2>Create New Kit</h2>
+                            <button class="modal-close-btn" onclick="closeModal('create-kit-modal')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <form onsubmit="createKit(event)">
+                            <div class="form-group">
+                                <label for="kit-type">Kit Type *</label>
+                                <select id="kit-type" required>
+                                    <option value="">Select kit type</option>
+                                    <option value="thermal_shell">Thermal Shell Pack</option>
+                                    <option value="stone_bbq">Stone BBQ Station</option>
+                                    <option value="herringbone_deck">Herringbone Deck Pack</option>
+                                    <option value="industrial_shelving">Industrial Shelving Unit</option>
+                                    <option value="privacy_screen">Privacy Screen Kit</option>
+                                    <option value="green_wall">Green Wall Trellis Kit</option>
+                                    <option value="instant_path">Instant Path Aggregate Pack</option>
+                                    <option value="acoustic_pack">Silent Office Acoustic Pack</option>
+                                    <option value="garage_rail">Heavy Duty Garage Rail</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="kit-title">Title *</label>
+                                <input type="text" id="kit-title" required placeholder="e.g., The Thermal Shell Pack">
+                            </div>
+                            <div class="form-group">
+                                <label for="kit-description">Description *</label>
+                                <textarea id="kit-description" required placeholder="Describe the kit and its benefits..."></textarea>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="kit-price">Price (€) *</label>
+                                    <input type="number" id="kit-price" step="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="kit-market-price">Market Price (€)</label>
+                                    <input type="number" id="kit-market-price" step="0.01">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="kit-quantity">Quantity Available *</label>
+                                    <input type="number" id="kit-quantity" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="kit-status">Status *</label>
+                                    <select id="kit-status" required>
+                                        <option value="upcoming">Upcoming</option>
+                                        <option value="active">Active</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="kit-start-date">Start Date *</label>
+                                    <input type="datetime-local" id="kit-start-date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="kit-end-date">End Date *</label>
+                                    <input type="datetime-local" id="kit-end-date" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="kit-location">Location *</label>
+                                <input type="text" id="kit-location" required placeholder="e.g., Berlin, Munich">
+                            </div>
+                            <div class="form-group">
+                                <label for="kit-specifications">Kit Contents/Specifications *</label>
+                                <textarea id="kit-specifications" required placeholder="List all items included in the kit, separated by commas..."></textarea>
+                            </div>
+                            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                                <button type="button" class="btn btn-outline" onclick="closeModal('create-kit-modal')">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Create Kit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        function createKit(event) {
+            event.preventDefault();
+            
+            const kitData = {
+                kit_type: document.getElementById('kit-type').value,
+                title: document.getElementById('kit-title').value,
+                description: document.getElementById('kit-description').value,
+                price: parseFloat(document.getElementById('kit-price').value),
+                market_price: document.getElementById('kit-market-price').value ? parseFloat(document.getElementById('kit-market-price').value) : null,
+                quantity_available: parseInt(document.getElementById('kit-quantity').value),
+                status: document.getElementById('kit-status').value,
+                start_date: new Date(document.getElementById('kit-start-date').value).toISOString(),
+                end_date: new Date(document.getElementById('kit-end-date').value).toISOString(),
+                location_name: document.getElementById('kit-location').value,
+                specifications: document.getElementById('kit-specifications').value,
+                quantity_sold: 0,
+                views: 0,
+                saves: 0
+            };
+
+            // Add to kits array
+            const newKit = {
+                id: kits.length + 1,
+                ...kitData,
+                createdAt: new Date().toISOString()
+            };
+            kits.push(newKit);
+
+            closeModal('create-kit-modal');
+            renderKits();
+            if (typeof showNotification === 'function') {
+                showNotification('Kit created successfully', 'success');
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+                setTimeout(() => modal.remove(), 300);
+            }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        // Update badges on load
+        function updateBadges() {
+            const pendingFlags = flags.filter(f => f.status === 'pending').length;
+            const pendingDisputes = disputes.filter(d => d.status === 'open' || d.status === 'under_review').length;
+            
+            const flagsBadge = document.getElementById('flags-badge');
+            const disputesBadge = document.getElementById('disputes-badge');
+            
+            if (flagsBadge) flagsBadge.textContent = pendingFlags;
+            if (disputesBadge) disputesBadge.textContent = pendingDisputes;
+        }
+
+        // Call updateBadges after rendering
+        setTimeout(updateBadges, 100);
+    </script>
+</body>
+
+</html>
+

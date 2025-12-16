@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limited-Time Kits - CoCreate</title>
+
+    <!-- Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="src/styles/index.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/pages.css">
+    <link rel="stylesheet" href="src/styles/mobile.css">
+    <style>
+        .kits-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .kits-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .kits-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .kits-header p {
+            font-size: 1.1rem;
+            color: var(--text-tertiary);
+        }
+
+        .kits-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .kits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .kit-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .kit-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px);
+            cursor: pointer;
+        }
+
+        .kit-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            z-index: 10;
+        }
+
+        .kit-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .kit-content {
+            padding: 1.5rem;
+        }
+
+        .kit-header {
+            margin-bottom: 1rem;
+        }
+
+        .kit-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .kit-type {
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kit-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .kit-pricing {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .kit-price {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .kit-market-price {
+            font-size: 1rem;
+            color: var(--text-tertiary);
+            text-decoration: line-through;
+        }
+
+        .kit-savings {
+            background: #E8F5E9;
+            color: #2E7D32;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .countdown-timer {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .countdown-label {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .countdown-display {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .countdown-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .countdown-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .countdown-label-unit {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+        }
+
+        .kit-specs {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .kit-specs-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            color: var(--text-tertiary);
+        }
+
+        .kit-specs-content {
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .kit-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .kit-stock {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        .kit-stock.high {
+            color: #2E7D32;
+        }
+
+        .kit-stock.low {
+            color: #D32F2F;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-tertiary);
+        }
+
+        .empty-state i {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Kit Detail Modal */
+        .kit-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            overflow-y: auto;
+        }
+
+        .kit-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .kit-modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            max-width: 1200px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .kit-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .kit-modal-close:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: rotate(90deg);
+        }
+
+        .kit-modal-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .kit-modal-images {
+            position: relative;
+            background: var(--bg-secondary);
+            border-radius: 16px 0 0 16px;
+        }
+
+        .kit-main-image {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 16px 0 0 0;
+        }
+
+        .kit-image-thumbnails {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .kit-thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .kit-thumbnail:hover,
+        .kit-thumbnail.active {
+            border-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        .kit-modal-details {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .kit-modal-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+        }
+
+        .kit-modal-type {
+            color: var(--primary-color);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .kit-modal-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .kit-modal-pricing-section {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .kit-modal-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .kit-modal-market-price {
+            font-size: 1.25rem;
+            color: var(--text-tertiary);
+            text-decoration: line-through;
+        }
+
+        .kit-modal-savings {
+            background: #E8F5E9;
+            color: #2E7D32;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .kit-modal-countdown {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .kit-modal-countdown-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .kit-modal-countdown-display {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .kit-modal-countdown-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .kit-modal-countdown-value {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .kit-modal-countdown-label-unit {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .kit-modal-section {
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .kit-modal-section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .kit-modal-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .kit-modal-specs {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+
+        .kit-modal-specs-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .kit-modal-spec-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+        }
+
+        .kit-modal-spec-item:last-child {
+            border-bottom: none;
+        }
+
+        .kit-modal-spec-icon {
+            color: var(--primary-color);
+            width: 20px;
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+
+        .kit-modal-spec-content {
+            flex: 1;
+        }
+
+        .kit-modal-spec-label {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        .kit-modal-spec-value {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .kit-modal-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .kit-modal-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .kit-modal-info-icon {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+        }
+
+        .kit-modal-info-content {
+            flex: 1;
+        }
+
+        .kit-modal-info-label {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .kit-modal-info-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .kit-modal-actions {
+            display: flex;
+            gap: 1rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .kit-modal-btn {
+            flex: 1;
+            padding: 1rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 968px) {
+            .kit-modal-body {
+                grid-template-columns: 1fr;
+            }
+
+            .kit-modal-images {
+                border-radius: 16px 16px 0 0;
+            }
+
+            .kit-main-image {
+                border-radius: 16px 16px 0 0;
+            }
+
+            .kit-modal-details {
+                padding: 1.5rem;
+            }
+
+            .kit-modal-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <div class="kits-container section">
+        <div class="kits-header">
+            <h1>Limited-Time Kits</h1>
+            <p>Premium construction materials from commercial sites - Available for a limited time only</p>
+        </div>
+
+        <div class="kits-tabs">
+            <button class="tab-button active" onclick="filterKits('active')">Active Kits</button>
+            <button class="tab-button" onclick="filterKits('upcoming')">Upcoming</button>
+            <button class="tab-button" onclick="filterKits('all')">All Kits</button>
+        </div>
+
+        <div id="kits-grid" class="kits-grid">
+            <!-- Kits will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Kit Detail Modal -->
+    <div id="kit-modal" class="kit-modal">
+        <div class="kit-modal-content">
+            <button class="kit-modal-close" onclick="closeKitModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="kit-modal-body" id="kit-modal-body">
+                <!-- Modal content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="src/utils/utils.js"></script>
+    <script src="src/utils/loadComponents.js"></script>
+    <script src="src/api/config.js"></script>
+    <script>
+        const API_BASE_URL = window.API_CONFIG?.baseURL || 'http://localhost:8000/api';
+
+        let kits = [];
+        let currentFilter = 'active';
+
+        const KIT_TYPES = {
+            'thermal_shell': 'Thermal Shell Pack',
+            'stone_bbq': 'Stone BBQ Station',
+            'herringbone_deck': 'Herringbone Deck Pack',
+            'industrial_shelving': 'Industrial Shelving Unit',
+            'privacy_screen': 'Privacy Screen Kit',
+            'green_wall': 'Green Wall Trellis Kit',
+            'instant_path': 'Instant Path Aggregate Pack',
+            'acoustic_pack': 'Silent Office Acoustic Pack',
+            'garage_rail': 'Heavy Duty Garage Rail'
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadKits();
+            setInterval(updateCountdowns, 1000);
+        });
+
+        async function loadKits() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/kits/`);
+                if (response.ok) {
+                    kits = await response.json();
+                    renderKits();
+                } else {
+                    kits = getMockKits();
+                    renderKits();
+                }
+            } catch (error) {
+                console.error('Error loading kits:', error);
+                kits = getMockKits();
+                renderKits();
+            }
+        }
+
+        function getMockKits() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const nextWeek = new Date(now);
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            const nextMonth = new Date(now);
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+            return [
+                {
+                    id: 1,
+                    kit_type: 'thermal_shell',
+                    title: 'The Thermal Shell Pack',
+                    description: 'High-performance insulation kit for a 3m x 3m garden office. Includes 15 sheets of 100mm PIR insulation, framing materials, and vapor control layer.',
+                    start_date: now.toISOString(),
+                    end_date: nextWeek.toISOString(),
+                    quantity_available: 5,
+                    quantity_sold: 3,
+                    price: '225.00',
+                    market_price: '550.00',
+                    location_name: 'Berlin',
+                    status: 'active',
+                    specifications: '15 Sheets of 100mm PIR Insulation, 40 Linear meters of Framing, 1 Roll Vapor Control Layer, Hardware Pack included'
+                },
+                {
+                    id: 2,
+                    kit_type: 'stone_bbq',
+                    title: 'The Chef\'s Outdoor Prep Station',
+                    description: 'Premium granite countertop with architectural facing bricks. Perfect for outdoor kitchen or BBQ station.',
+                    start_date: now.toISOString(),
+                    end_date: nextMonth.toISOString(),
+                    quantity_available: 2,
+                    quantity_sold: 1,
+                    price: '400.00',
+                    market_price: '800.00',
+                    location_name: 'Munich',
+                    status: 'active',
+                    specifications: '1 x Stone Slab (Cut to size), 120 x Bricks, 3 Bags Pre-mixed Mortar, 1 Tube Stone Adhesive'
+                },
+                {
+                    id: 3,
+                    kit_type: 'herringbone_deck',
+                    title: 'The Herringbone Deck Pack',
+                    description: 'High-end composite decking in short lengths, perfect for stunning herringbone or box pattern layouts.',
+                    start_date: tomorrow.toISOString(),
+                    end_date: nextMonth.toISOString(),
+                    quantity_available: 8,
+                    quantity_sold: 0,
+                    price: '350.00',
+                    market_price: '600.00',
+                    location_name: 'Hamburg',
+                    status: 'upcoming',
+                    specifications: '~40 Decking Boards (Uniform short lengths), 25m Structural Timber, 200 x Hidden Clip Fasteners & Screws'
+                },
+                {
+                    id: 4,
+                    kit_type: 'industrial_shelving',
+                    title: 'The Loft Style Shelving Unit',
+                    description: 'Heavy-duty galvanized cable tray shelving with threaded rod supports. Industrial chic design.',
+                    start_date: now.toISOString(),
+                    end_date: nextWeek.toISOString(),
+                    quantity_available: 1,
+                    quantity_sold: 4,
+                    price: '120.00',
+                    market_price: '300.00',
+                    location_name: 'Berlin',
+                    status: 'active',
+                    specifications: '5 x Cable Tray shelves (pre-cut to 1m), 4 x 2m Threaded Rods, Hardware Pack included'
+                }
+            ];
+        }
+
+        function filterKits(filter) {
+            currentFilter = filter;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            renderKits();
+        }
+
+        function renderKits() {
+            const container = document.getElementById('kits-grid');
+            
+            let filteredKits = kits;
+            if (currentFilter === 'active') {
+                filteredKits = kits.filter(kit => kit.status === 'active' && kit.is_available !== false);
+            } else if (currentFilter === 'upcoming') {
+                filteredKits = kits.filter(kit => kit.status === 'upcoming');
+            }
+
+            if (filteredKits.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <i class="fas fa-box-open"></i>
+                        <h3>No kits available</h3>
+                        <p>Check back soon for new limited-time kits!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredKits.map(kit => `
+                <div class="kit-card" onclick="viewKit(${kit.id})">
+                    <div class="kit-badge">${kit.status === 'upcoming' ? 'Upcoming' : 'Limited Time'}</div>
+                    <div class="kit-image">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="kit-content">
+                        <div class="kit-header">
+                            <div class="kit-type">${KIT_TYPES[kit.kit_type] || kit.kit_type}</div>
+                            <div class="kit-title">${kit.title}</div>
+                        </div>
+                        <div class="kit-description">${kit.description}</div>
+                        
+                        ${kit.status === 'active' ? `
+                            <div class="countdown-timer" id="countdown-${kit.id}">
+                                <div class="countdown-label">Time Remaining</div>
+                                <div class="countdown-display">
+                                    <div class="countdown-unit">
+                                        <div class="countdown-value" id="days-${kit.id}">00</div>
+                                        <div class="countdown-label-unit">Days</div>
+                                    </div>
+                                    <div class="countdown-unit">
+                                        <div class="countdown-value" id="hours-${kit.id}">00</div>
+                                        <div class="countdown-label-unit">Hours</div>
+                                    </div>
+                                    <div class="countdown-unit">
+                                        <div class="countdown-value" id="minutes-${kit.id}">00</div>
+                                        <div class="countdown-label-unit">Min</div>
+                                    </div>
+                                    <div class="countdown-unit">
+                                        <div class="countdown-value" id="seconds-${kit.id}">00</div>
+                                        <div class="countdown-label-unit">Sec</div>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <div class="kit-specs">
+                            <div class="kit-specs-title">Kit Contents</div>
+                            <div class="kit-specs-content">${kit.specifications || 'See description for details'}</div>
+                        </div>
+
+                        <div class="kit-pricing">
+                            <div class="kit-price">€${parseFloat(kit.price).toFixed(2)}</div>
+                            ${kit.market_price ? `
+                                <div class="kit-market-price">€${parseFloat(kit.market_price).toFixed(2)}</div>
+                                <div class="kit-savings">Save ${calculateSavings(kit.price, kit.market_price)}%</div>
+                            ` : ''}
+                        </div>
+
+                        <div class="kit-footer">
+                            <div>
+                                <div class="kit-stock ${kit.quantity_available > 3 ? 'high' : kit.quantity_available > 0 ? '' : 'low'}">
+                                    ${kit.quantity_available > 0 
+                                        ? `${kit.quantity_available} available` 
+                                        : 'Sold Out'}
+                                </div>
+                                <div class="text-sm text-tertiary">${kit.location_name}</div>
+                            </div>
+                            <button class="btn btn-primary" ${kit.quantity_available === 0 ? 'disabled' : ''} 
+                                onclick="event.stopPropagation(); viewKit(${kit.id})" style="cursor: pointer;">
+                                ${kit.status === 'upcoming' ? 'Notify Me' : 'View Details'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            updateCountdowns();
+        }
+
+        function updateCountdowns() {
+            kits.forEach(kit => {
+                if (kit.status === 'active' && kit.end_date) {
+                    const now = new Date().getTime();
+                    const end = new Date(kit.end_date).getTime();
+                    const distance = end - now;
+
+                    if (distance > 0) {
+                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                        const daysEl = document.getElementById(`days-${kit.id}`);
+                        const hoursEl = document.getElementById(`hours-${kit.id}`);
+                        const minutesEl = document.getElementById(`minutes-${kit.id}`);
+                        const secondsEl = document.getElementById(`seconds-${kit.id}`);
+
+                        if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+                        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+                        if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+                        if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+                    } else {
+                        // Kit expired
+                        const countdownEl = document.getElementById(`countdown-${kit.id}`);
+                        if (countdownEl) {
+                            countdownEl.innerHTML = '<div style="color: #D32F2F; font-weight: 600;">Expired</div>';
+                        }
+                    }
+                }
+            });
+        }
+
+        function calculateSavings(price, marketPrice) {
+            return Math.round(((marketPrice - price) / marketPrice) * 100);
+        }
+
+        function getKitImages(kitType) {
+            // Generate relevant placeholder images based on kit type
+            const imageMap = {
+                'thermal_shell': [
+                    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&h=600&fit=crop'
+                ],
+                'stone_bbq': [
+                    'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1556911220-bff31c812dba?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop'
+                ],
+                'herringbone_deck': [
+                    'https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop'
+                ],
+                'industrial_shelving': [
+                    'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1556912172-45b7abe8b7c1?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=800&h=600&fit=crop'
+                ],
+                'privacy_screen': [
+                    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&h=600&fit=crop'
+                ],
+                'green_wall': [
+                    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&h=600&fit=crop'
+                ],
+                'instant_path': [
+                    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&h=600&fit=crop'
+                ],
+                'acoustic_pack': [
+                    'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1497366754035-f200368a1e55?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop'
+                ],
+                'garage_rail': [
+                    'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1556912172-45b7abe8b7c1?w=800&h=600&fit=crop',
+                    'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=800&h=600&fit=crop'
+                ]
+            };
+            return imageMap[kitType] || [
+                'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop',
+                'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&h=600&fit=crop'
+            ];
+        }
+
+        function parseSpecifications(specs) {
+            if (!specs) return [];
+            // Parse specifications string into array of items
+            return specs.split(',').map(item => item.trim()).filter(item => item);
+        }
+
+        function viewKit(id) {
+            const kit = kits.find(k => k.id === id);
+            if (!kit) return;
+
+            const images = getKitImages(kit.kit_type);
+            const specs = parseSpecifications(kit.specifications);
+            const now = new Date().getTime();
+            const end = new Date(kit.end_date).getTime();
+            const distance = end - now;
+            const isActive = kit.status === 'active' && distance > 0;
+
+            let countdownHtml = '';
+            if (isActive) {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                countdownHtml = `
+                    <div class="kit-modal-countdown" id="modal-countdown-${kit.id}">
+                        <div class="kit-modal-countdown-label">Limited Time Offer - Ends In</div>
+                        <div class="kit-modal-countdown-display">
+                            <div class="kit-modal-countdown-unit">
+                                <div class="kit-modal-countdown-value" id="modal-days-${kit.id}">${String(days).padStart(2, '0')}</div>
+                                <div class="kit-modal-countdown-label-unit">Days</div>
+                            </div>
+                            <div class="kit-modal-countdown-unit">
+                                <div class="kit-modal-countdown-value" id="modal-hours-${kit.id}">${String(hours).padStart(2, '0')}</div>
+                                <div class="kit-modal-countdown-label-unit">Hours</div>
+                            </div>
+                            <div class="kit-modal-countdown-unit">
+                                <div class="kit-modal-countdown-value" id="modal-minutes-${kit.id}">${String(minutes).padStart(2, '0')}</div>
+                                <div class="kit-modal-countdown-label-unit">Min</div>
+                            </div>
+                            <div class="kit-modal-countdown-unit">
+                                <div class="kit-modal-countdown-value" id="modal-seconds-${kit.id}">${String(seconds).padStart(2, '0')}</div>
+                                <div class="kit-modal-countdown-label-unit">Sec</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const modalBody = document.getElementById('kit-modal-body');
+            modalBody.innerHTML = `
+                <div class="kit-modal-images">
+                    <img src="${images[0]}" alt="${kit.title}" class="kit-main-image" id="kit-main-image">
+                    <div class="kit-image-thumbnails">
+                        ${images.map((img, index) => `
+                            <img src="${img}" alt="${kit.title} - Image ${index + 1}" 
+                                class="kit-thumbnail ${index === 0 ? 'active' : ''}"
+                                onclick="changeMainImage('${img}', ${index})">
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="kit-modal-details">
+                    <div class="kit-modal-header">
+                        <div class="kit-modal-type">${KIT_TYPES[kit.kit_type] || kit.kit_type}</div>
+                        <h1 class="kit-modal-title">${kit.title}</h1>
+                        <div class="kit-modal-pricing-section">
+                            <div class="kit-modal-price">€${parseFloat(kit.price).toFixed(2)}</div>
+                            ${kit.market_price ? `
+                                <div class="kit-modal-market-price">€${parseFloat(kit.market_price).toFixed(2)}</div>
+                                <div class="kit-modal-savings">Save ${calculateSavings(kit.price, kit.market_price)}%</div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    ${countdownHtml}
+
+                    <div class="kit-modal-section">
+                        <div class="kit-modal-section-title">Description</div>
+                        <div class="kit-modal-description">${kit.description}</div>
+                    </div>
+
+                    ${specs.length > 0 ? `
+                        <div class="kit-modal-section">
+                            <div class="kit-modal-section-title">Kit Contents</div>
+                            <div class="kit-modal-specs">
+                                <ul class="kit-modal-specs-list">
+                                    ${specs.map(spec => `
+                                        <li class="kit-modal-spec-item">
+                                            <i class="fas fa-check-circle kit-modal-spec-icon"></i>
+                                            <div class="kit-modal-spec-content">
+                                                <div class="kit-modal-spec-value">${spec}</div>
+                                            </div>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div class="kit-modal-section">
+                        <div class="kit-modal-section-title">Kit Information</div>
+                        <div class="kit-modal-info-grid">
+                            <div class="kit-modal-info-item">
+                                <i class="fas fa-map-marker-alt kit-modal-info-icon"></i>
+                                <div class="kit-modal-info-content">
+                                    <div class="kit-modal-info-label">Location</div>
+                                    <div class="kit-modal-info-value">${kit.location_name}</div>
+                                </div>
+                            </div>
+                            <div class="kit-modal-info-item">
+                                <i class="fas fa-box kit-modal-info-icon"></i>
+                                <div class="kit-modal-info-content">
+                                    <div class="kit-modal-info-label">Available</div>
+                                    <div class="kit-modal-info-value">${kit.quantity_available} units</div>
+                                </div>
+                            </div>
+                            <div class="kit-modal-info-item">
+                                <i class="fas fa-shopping-cart kit-modal-info-icon"></i>
+                                <div class="kit-modal-info-content">
+                                    <div class="kit-modal-info-label">Sold</div>
+                                    <div class="kit-modal-info-value">${kit.quantity_sold} units</div>
+                                </div>
+                            </div>
+                            <div class="kit-modal-info-item">
+                                <i class="fas fa-calendar kit-modal-info-icon"></i>
+                                <div class="kit-modal-info-content">
+                                    <div class="kit-modal-info-label">Status</div>
+                                    <div class="kit-modal-info-value">${kit.status.charAt(0).toUpperCase() + kit.status.slice(1)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kit-modal-actions">
+                        <button class="btn btn-outline kit-modal-btn" onclick="addToWishlist(${kit.id})">
+                            <i class="fas fa-heart"></i> Save for Later
+                        </button>
+                        <button class="btn btn-primary kit-modal-btn" 
+                            ${kit.quantity_available === 0 ? 'disabled' : ''}
+                            onclick="addToCart(${kit.id})">
+                            <i class="fas fa-shopping-cart"></i> ${kit.status === 'upcoming' ? 'Notify Me' : 'Add to Cart'}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Show modal
+            document.getElementById('kit-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Start countdown if active
+            if (isActive) {
+                startModalCountdown(kit.id, kit.end_date);
+            }
+        }
+
+        function changeMainImage(imageSrc, index) {
+            document.getElementById('kit-main-image').src = imageSrc;
+            document.querySelectorAll('.kit-thumbnail').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
+            });
+        }
+
+        function closeKitModal() {
+            document.getElementById('kit-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function startModalCountdown(kitId, endDate) {
+            const interval = setInterval(() => {
+                const now = new Date().getTime();
+                const end = new Date(endDate).getTime();
+                const distance = end - now;
+
+                if (distance > 0) {
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    const daysEl = document.getElementById(`modal-days-${kitId}`);
+                    const hoursEl = document.getElementById(`modal-hours-${kitId}`);
+                    const minutesEl = document.getElementById(`modal-minutes-${kitId}`);
+                    const secondsEl = document.getElementById(`modal-seconds-${kitId}`);
+
+                    if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+                    if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+                    if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+                    if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+                } else {
+                    clearInterval(interval);
+                    const countdownEl = document.getElementById(`modal-countdown-${kitId}`);
+                    if (countdownEl) {
+                        countdownEl.innerHTML = '<div style="color: #D32F2F; font-weight: 600; text-align: center; padding: 1rem;">Offer Expired</div>';
+                    }
+                }
+            }, 1000);
+        }
+
+        function addToCart(kitId) {
+            const kit = kits.find(k => k.id === kitId);
+            if (!kit) return;
+
+            if (typeof showNotification === 'function') {
+                showNotification(`${kit.title} added to cart!`, 'success');
+            } else {
+                alert(`${kit.title} added to cart!`);
+            }
+            // In a real implementation, this would add the kit to the cart via API
+        }
+
+        function addToWishlist(kitId) {
+            const kit = kits.find(k => k.id === kitId);
+            if (!kit) return;
+
+            if (typeof showNotification === 'function') {
+                showNotification(`${kit.title} saved to wishlist!`, 'success');
+            } else {
+                alert(`${kit.title} saved to wishlist!`);
+            }
+            // In a real implementation, this would save to wishlist via API
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('kit-modal');
+            if (event.target === modal) {
+                closeKitModal();
+            }
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeKitModal();
+            }
+        });
+
+        // Update countdowns every second
+        setInterval(updateCountdowns, 1000);
+    </script>
+</body>
+
+</html>
+

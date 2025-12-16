@@ -5,11 +5,13 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from .models import Category, Product, Order, Cart, CartItem, Wishlist
+from django.utils import timezone
+from .models import Category, Product, Order, Cart, CartItem, Wishlist, Project, ProductAlert, Kit, Flag, Dispute
 from .serializers import (
     CategorySerializer, ProductSerializer, ProductListSerializer, 
     OrderSerializer, OrderCreateSerializer, CartSerializer, 
-    CartItemSerializer, WishlistSerializer
+    CartItemSerializer, WishlistSerializer, ProjectSerializer,
+    ProductAlertSerializer, KitSerializer, FlagSerializer, DisputeSerializer
 )
 
 
@@ -201,3 +203,251 @@ class WishlistViewSet(viewsets.ModelViewSet):
         else:
             Wishlist.objects.create(user=request.user, product=product)
             return Response({'saved': True, 'message': 'Product added to wishlist'})
+
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    """API endpoint for buyer projects."""
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Project.objects.filter(buyer=self.request.user).prefetch_related('orders')
+    
+    def perform_create(self, serializer):
+        serializer.save(buyer=self.request.user)
+    
+    @action(detail=True, methods=['get'])
+    def orders(self, request, pk=None):
+        """Get all orders for a project."""
+        project = self.get_object()
+        orders = project.orders.all()
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+
+class ProductAlertViewSet(viewsets.ModelViewSet):
+    """API endpoint for product alerts."""
+    serializer_class = ProductAlertSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return ProductAlert.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    
+    @action(detail=False, methods=['post'])
+    def check_matches(self, request):
+        """Check for products matching active alerts."""
+        from math import radians, cos, sin, asin, sqrt
+        
+        alerts = ProductAlert.objects.filter(user=request.user, is_active=True)
+        matches = []
+        
+        for alert in alerts:
+            # Build query
+            query = Q(status='active')
+            
+            if alert.keywords:
+                query &= (Q(title__icontains=alert.keywords) | Q(description__icontains=alert.keywords))
+            
+            if alert.category:
+                query &= Q(category=alert.category)
+            
+            if alert.max_price:
+                query &= Q(price__lte=alert.max_price)
+            
+            if alert.condition:
+                query &= Q(condition=alert.condition)
+            
+            # Location filter (if provided)
+            products = Product.objects.filter(query)
+            
+            if alert.location_lat and alert.location_long:
+                # Filter by radius
+                def haversine(lon1, lat1, lon2, lat2):
+                    """Calculate distance between two points."""
+                    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+                    dlon = lon2 - lon1
+                    dlat = lat2 - lat1
+                    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+                    c = 2 * asin(sqrt(a))
+                    km = 6371 * c
+                    return km
+                
+                filtered_products = []
+                for product in products:
+                    if product.location_lat and product.location_long:
+                        distance = haversine(
+                            float(alert.location_long),
+                            float(alert.location_lat),
+                            float(product.location_long),
+                            float(product.location_lat)
+                        )
+                        if distance <= alert.radius_km:
+                            filtered_products.append(product)
+                products = filtered_products
+            else:
+                products = list(products)
+            
+            if products:
+                matches.append({
+                    'alert_id': alert.id,
+                    'alert_name': str(alert),
+                    'products': ProductListSerializer(products, many=True).data
+                })
+        
+        return Response({'matches': matches})
+
+
+class KitViewSet(viewsets.ModelViewSet):
+    """API endpoint for limited-time kits."""
+    queryset = Kit.objects.all()
+    serializer_class = KitSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['kit_type', 'status']
+    search_fields = ['title', 'description']
+    ordering_fields = ['start_date', 'end_date', 'price', 'created_at']
+    ordering = ['-created_at']
+    
+    @action(detail=False, methods=['get'])
+    def active(self, request):
+        """Get all currently active kits."""
+        now = timezone.now()
+        active_kits = Kit.objects.filter(
+            status='active',
+            start_date__lte=now,
+            end_date__gte=now,
+            quantity_available__gt=0
+        )
+        serializer = self.get_serializer(active_kits, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def upcoming(self, request):
+        """Get all upcoming kits."""
+        now = timezone.now()
+        upcoming_kits = Kit.objects.filter(
+            status='upcoming',
+            start_date__gt=now
+        )
+        serializer = self.get_serializer(upcoming_kits, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'])
+    def increment_views(self, request, pk=None):
+        """Increment kit view count."""
+        kit = self.get_object()
+        kit.views += 1
+        kit.save(update_fields=['views'])
+        return Response({'views': kit.views})
+
+
+class FlagViewSet(viewsets.ModelViewSet):
+    """API endpoint for flags/reports."""
+    serializer_class = FlagSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['flag_type', 'status', 'reason']
+    search_fields = ['description', 'product__title', 'order__id']
+    ordering_fields = ['created_at', 'status']
+    ordering = ['-created_at']
+    
+    def get_queryset(self):
+        user = self.request.user
+        # Admins can see all flags, users can only see their own
+        if hasattr(user, 'role') and user.role == 'admin':
+            return Flag.objects.all().select_related('flagger', 'product', 'order', 'flagged_user', 'reviewed_by')
+        return Flag.objects.filter(flagger=user).select_related('flagger', 'product', 'order', 'flagged_user')
+    
+    def perform_create(self, serializer):
+        serializer.save(flagger=self.request.user)
+    
+    @action(detail=True, methods=['post'])
+    def resolve(self, request, pk=None):
+        """Resolve a flag (admin only)."""
+        flag = self.get_object()
+        resolution = request.data.get('resolution', 'resolved')
+        admin_notes = request.data.get('admin_notes', '')
+        
+        if not (hasattr(request.user, 'role') and request.user.role == 'admin'):
+            return Response({'error': 'Only admins can resolve flags'}, status=status.HTTP_403_FORBIDDEN)
+        
+        flag.status = resolution
+        flag.reviewed_by = request.user
+        flag.admin_notes = admin_notes
+        flag.resolved_at = timezone.now()
+        flag.save()
+        
+        serializer = self.get_serializer(flag)
+        return Response(serializer.data)
+
+
+class DisputeViewSet(viewsets.ModelViewSet):
+    """API endpoint for disputes."""
+    serializer_class = DisputeSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['status', 'reason']
+    search_fields = ['description', 'order__id']
+    ordering_fields = ['created_at', 'status']
+    ordering = ['-created_at']
+    
+    def get_queryset(self):
+        user = self.request.user
+        # Users can see disputes they're involved in, admins see all
+        if hasattr(user, 'role') and user.role == 'admin':
+            return Dispute.objects.all().select_related('order', 'raised_by', 'resolved_by')
+        return Dispute.objects.filter(
+            Q(raised_by=user) | Q(order__buyer=user) | Q(order__seller=user)
+        ).select_related('order', 'raised_by', 'resolved_by')
+    
+    def perform_create(self, serializer):
+        serializer.save(raised_by=self.request.user)
+    
+    @action(detail=True, methods=['post'])
+    def add_evidence(self, request, pk=None):
+        """Add evidence to a dispute."""
+        dispute = self.get_object()
+        evidence = request.data.get('evidence', '')
+        
+        user = request.user
+        if dispute.order.buyer == user:
+            dispute.buyer_evidence = evidence
+        elif dispute.order.seller == user:
+            dispute.seller_evidence = evidence
+        else:
+            return Response({'error': 'You are not part of this dispute'}, status=status.HTTP_403_FORBIDDEN)
+        
+        dispute.save()
+        serializer = self.get_serializer(dispute)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'])
+    def resolve(self, request, pk=None):
+        """Resolve a dispute (admin only)."""
+        dispute = self.get_object()
+        resolution = request.data.get('resolution')
+        resolution_notes = request.data.get('resolution_notes', '')
+        refund_amount = request.data.get('refund_amount')
+        
+        if not (hasattr(request.user, 'role') and request.user.role == 'admin'):
+            return Response({'error': 'Only admins can resolve disputes'}, status=status.HTTP_403_FORBIDDEN)
+        
+        dispute.status = resolution
+        dispute.resolved_by = request.user
+        dispute.resolution_notes = resolution_notes
+        if refund_amount:
+            dispute.refund_amount = refund_amount
+        dispute.resolved_at = timezone.now()
+        dispute.save()
+        
+        # Update order escrow status
+        if resolution in ['buyer_favored', 'partial_refund']:
+            dispute.order.escrow_status = 'refunded'
+        else:
+            dispute.order.escrow_status = 'released'
+        dispute.order.save()
+        
+        serializer = self.get_serializer(dispute)
+        return Response(serializer.data)
