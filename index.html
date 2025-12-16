@@ -28,8 +28,7 @@
 
     <main>
         <!-- New Hero Section -->
-        <section
-            style="position: relative; min-height: 90vh; display: flex; align-items: center; overflow: hidden; padding-top: 80px;">
+        <section class="hero-section">
             <!-- Background Blobs -->
             <div class="hero-blob" style="top: -10%; right: -5%; width: 600px; height: 600px; background: #ffe0e9;">
             </div>
@@ -37,79 +36,67 @@
                 style="bottom: 0%; left: -10%; width: 500px; height: 500px; background: #e0f2fe; animation-delay: -5s;">
             </div>
 
-            <div class="container" style="position: relative; z-index: 1;">
-                <div style="text-align: center; max-width: 900px; margin: 0 auto;">
+            <div class="container hero-content-wrapper">
+                <div class="hero-content-center">
                     <!-- Animated Badge -->
-                    <div class="scroll-reveal"
-                        style="display: inline-flex; align-items: center; gap: 8px; background: white; padding: 6px 16px 6px 6px; border-radius: 100px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); margin-bottom: 32px; border: 1px solid rgba(0,0,0,0.05);">
-                        <span
-                            style="background: #A6375F; color: white; padding: 4px 12px; border-radius: 100px; font-size: 0.75rem; font-weight: 700;">NEW</span>
-                        <span style="font-size: 0.85rem; font-weight: 500; color: #666;">CoCreate for Enterprise is
-                            here</span>
-                        <span style="color: #A6375F;">→</span>
+                    <div class="scroll-reveal animated-badge">
+                        <span class="badge-label">NEW</span>
+                        <span class="badge-text">CoCreate for Enterprise is here</span>
+                        <span class="badge-arrow">→</span>
                     </div>
 
                     <!-- Massive Headline -->
-                    <h1 class="scroll-reveal delay-100"
-                        style="font-size: clamp(3rem, 8vw, 6rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; color: #1a1a1a; margin-bottom: 32px;">
+                    <h1 class="scroll-reveal delay-100 hero-headline">
                         The sustainable<br>
-                        <span style="color: #A6375F;">material marketplace.</span>
+                        <span class="hero-headline-accent">material marketplace.</span>
                     </h1>
 
                     <!-- Subhead -->
-                    <p class="scroll-reveal delay-200"
-                        style="font-size: 1.35rem; color: #5f6368; max-width: 600px; margin: 0 auto 48px; line-height: 1.6;">
+                    <p class="scroll-reveal delay-200 hero-subheadline">
                         Connect contractors with surplus inventory. Reduce waste, save money, and build better.
                     </p>
 
                     <!-- CTAs -->
-                    <div class="scroll-reveal delay-300"
-                        style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                    <div class="scroll-reveal delay-300 cta-container">
                         <a href="browse.html" class="btn btn-primary btn-pill">
                             Explore Marketplace
                         </a>
-                        <a href="signup.html" class="btn btn-outline btn-pill"
-                            style="background: white; border-color: #e0e0e0; color: #1a1a1a;">
+                        <a href="signup.html" class="btn btn-outline btn-outline-white btn-pill">
                             Become a Seller
                         </a>
                     </div>
 
                     <!-- Hero UI Interactive Demo Preview -->
-                    <div class="scroll-reveal delay-300" style="margin-top: 80px; position: relative;">
-                        <div
-                            style="background: white; border-radius: 24px 24px 0 0; box-shadow: 0 40px 100px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.05); padding: 24px; max-width: 1000px; margin: 0 auto; overflow: hidden;">
+                    <div class="scroll-reveal delay-300 browser-mockup-wrapper">
+                        <div class="browser-mockup">
                             <!-- Fake Browser Nav -->
-                            <div style="display: flex; gap: 8px; margin-bottom: 24px; padding-left: 8px;">
-                                <div style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f56;"></div>
-                                <div style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e;"></div>
-                                <div style="width: 12px; height: 12px; border-radius: 50%; background: #27c93f;"></div>
+                            <div class="browser-nav">
+                                <div class="browser-dot browser-dot-red"></div>
+                                <div class="browser-dot browser-dot-yellow"></div>
+                                <div class="browser-dot browser-dot-green"></div>
                             </div>
                             <!-- Mock UI Grid -->
-                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; opacity: 0.8;">
-                                <div style="height: 180px; background: #f0f0f0; border-radius: 16px;"></div>
-                                <div style="height: 180px; background: #f0f0f0; border-radius: 16px;"></div>
-                                <div style="height: 180px; background: #f0f0f0; border-radius: 16px;"></div>
-                                <div style="height: 180px; background: #f0f0f0; border-radius: 16px;"></div>
+                            <div class="browser-grid">
+                                <div class="browser-grid-item"></div>
+                                <div class="browser-grid-item"></div>
+                                <div class="browser-grid-item"></div>
+                                <div class="browser-grid-item"></div>
                             </div>
                             <!-- Hovering Detail Card Animation -->
-                            <div
-                                style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -20%); background: white; padding: 20px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); width: 300px; text-align: left; animation: float 6s ease-in-out infinite;">
-                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                                    <div
-                                        style="width: 40px; height: 40px; background: #A6375F; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">
+                            <div class="floating-detail-card">
+                                <div class="detail-card-header">
+                                    <div class="detail-card-icon">
                                         <i class="fas fa-building"></i>
                                     </div>
                                     <div>
-                                        <div style="font-weight: 700;">Red Bricks</div>
-                                        <div style="font-size: 0.8rem; color: #10B981;">Save 45% vs retail</div>
+                                        <div class="detail-card-title">Red Bricks</div>
+                                        <div class="detail-card-subtitle">Save 45% vs retail</div>
                                     </div>
                                 </div>
-                                <div
-                                    style="height: 6px; background: #f0f0f0; border-radius: 3px; width: 100%; margin-bottom: 8px;">
-                                    <div style="width: 70%; height: 100%; background: #A6375F; border-radius: 3px;">
-                                    </div>
+                                <div class="detail-card-progress">
+                                    <div class="detail-card-progress-fill"></div>
                                 </div>
-                                <div style="font-size: 0.8rem; color: #999;">Only 12 pallets left</div>
+                                <div class="detail-card-meta">Only 12 pallets left</div>
                             </div>
                         </div>
                     </div>
@@ -118,11 +105,8 @@
         </section>
 
         <!-- Infinite Marquee Section -->
-        <section
-            style="padding: 60px 0; background: #fafafa; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0;">
-            <div
-                style="text-align: center; margin-bottom: 32px; font-size: 0.9rem; font-weight: 600; color: #9aa0a6; text-transform: uppercase; letter-spacing: 1px;">
-                Trusted Categories</div>
+        <section class="marquee-section">
+            <div class="marquee-label">Trusted Categories</div>
             <div class="marquee-container">
                 <div class="marquee-content" id="marquee-content-container">
                     <!-- Populated by JS -->
@@ -131,107 +115,88 @@
         </section>
 
         <!-- Bento Grid Features Section -->
-        <section style="padding: 120px 0; background: white;">
+        <section class="features-section">
             <div class="container">
-                <div style="max-width: 600px; margin: 0 auto 80px; text-align: center;">
-                    <h2 class="scroll-reveal"
-                        style="font-size: 3rem; font-weight: 700; color: #1a1a1a; letter-spacing: -0.02em; margin-bottom: 16px;">
+                <div class="features-header">
+                    <h2 class="scroll-reveal features-title">
                         Why CoCreate?
                     </h2>
-                    <p class="scroll-reveal delay-100" style="font-size: 1.2rem; color: #5f6368;">
+                    <p class="scroll-reveal delay-100 features-description">
                         Built for the modern contractor. Streamlined, secure, and sustainable.
                     </p>
                 </div>
 
                 <div class="bento-grid">
                     <!-- Card 1: Large Primary -->
-                    <div class="bento-card col-span-8 bento-light scroll-reveal delay-100"
-                        style="height: 500px; display: flex; flex-direction: column; justify-content: center;">
-                        <div style="max-width: 400px;">
-                            <h3
-                                style="font-size: 2.5rem; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.01em;">
+                    <div class="bento-card col-span-8 bento-light bento-card-primary scroll-reveal delay-100">
+                        <div class="bento-card-content">
+                            <h3 class="bento-card-title-large">
                                 Save up to 60% on materials.</h3>
-                            <p style="font-size: 1.1rem; color: #5f6368; margin-bottom: 32px;">Every listing is priced
+                            <p class="bento-card-text">Every listing is priced
                                 to sell. Find high-quality surplus from verified professional job sites.</p>
-                            <a href="browse.html" class="btn btn-primary"
-                                style="border-radius: 100px; padding: 12px 24px; display: inline-flex; width: fit-content;">Start
+                            <a href="browse.html" class="btn btn-primary btn-pill">Start
                                 Saving</a>
                         </div>
-                        <div
-                            style="position: absolute; right: -50px; top: 50%; transform: translateY(-50%); width: 400px; height: 400px; background: url('https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800') center/cover; border-radius: 24px; box-shadow: 0 40px 80px rgba(0,0,0,0.1);">
-                        </div>
+                        <div class="bento-card-image"></div>
                     </div>
 
                     <!-- Card 2: Speed Stats -->
-                    <div class="bento-card col-span-4 bento-primary scroll-reveal delay-200"
-                        style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="bento-card col-span-4 bento-primary bento-card-speed scroll-reveal delay-200">
                         <div>
-                            <div style="font-size: 4rem; font-weight: 800; margin-bottom: 8px;">24h</div>
-                            <h3 style="font-size: 1.5rem; font-weight: 600;">Fast Pickup</h3>
+                            <div class="bento-card-stat">24h</div>
+                            <h3 class="bento-card-stat-title">Fast Pickup</h3>
                         </div>
-                        <p style="opacity: 0.9; line-height: 1.6;">Most materials are ready for pickup within 24 hours
+                        <p class="bento-card-stat-text">Most materials are ready for pickup within 24 hours
                             of purchase.</p>
                     </div>
 
                     <!-- Card 3: Security -->
-                    <div class="bento-card col-span-4 bento-dark scroll-reveal delay-100" style="height: 350px;">
-                        <div style="font-size: 3rem; margin-bottom: 24px;"><i class="fas fa-shield-halved"></i></div>
-                        <h3 style="font-size: 1.75rem; font-weight: 600; margin-bottom: 16px;">Escrow Secure</h3>
-                        <p style="color: #9aa0a6; line-height: 1.6;">Payments are held safely until you verify the goods
+                    <div class="bento-card col-span-4 bento-dark bento-card-security scroll-reveal delay-100">
+                        <div class="bento-card-icon"><i class="fas fa-shield-halved"></i></div>
+                        <h3 class="bento-card-subtitle">Escrow Secure</h3>
+                        <p class="bento-card-description">Payments are held safely until you verify the goods
                             manually. No risk, just trust.</p>
                     </div>
 
                     <!-- Card 4: Eco Impact -->
-                    <div class="bento-card col-span-8 bento-light scroll-reveal delay-200"
-                        style="background: #e6f4ea; border: none; height: 350px; display: flex; align-items: center; justify-content: space-between;">
-                        <div style="padding-right: 40px; flex: 1;">
-                            <div
-                                style="display: inline-block; background: #ceead6; color: #137333; font-weight: 700; padding: 4px 12px; border-radius: 100px; font-size: 0.8rem; margin-bottom: 16px;">
-                                ECO-FRIENDLY</div>
-                            <h3 style="font-size: 2rem; font-weight: 700; color: #0d652d; margin-bottom: 16px;">Zero
-                                Waste Goal</h3>
-                            <p style="color: #0d652d; opacity: 0.8;">Join our mission to divert 10,000 tons of
+                    <div class="bento-card col-span-8 bento-card-eco scroll-reveal delay-200">
+                        <div class="bento-eco-content">
+                            <div class="eco-badge">ECO-FRIENDLY</div>
+                            <h3 class="eco-title">Zero Waste Goal</h3>
+                            <p class="eco-text">Join our mission to divert 10,000 tons of
                                 construction waste from landfills by 2026.</p>
                         </div>
-                        <div style="font-size: 8rem; opacity: 0.2; transform: rotate(15deg);"><i
-                                class="fas fa-seedling"></i></div>
+                        <div class="eco-icon"><i class="fas fa-seedling"></i></div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Product Carousel Section (Scroll Snap) -->
-        <section style="padding: 100px 0; background: #fafafa; overflow: hidden;">
+        <section class="product-carousel-section">
             <div class="container">
-                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 48px;">
-                    <h2 class="scroll-reveal"
-                        style="font-size: 2.5rem; font-weight: 700; color: #1a1a1a; letter-spacing: -0.02em;">Fresh
-                        Listings</h2>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-icon" onclick="scrollCarousel('left')"
-                            style="border-radius: 50%; width: 48px; height: 48px; background: white; border: 1px solid #e0e0e0; cursor: pointer;">←</button>
-                        <button class="btn btn-icon" onclick="scrollCarousel('right')"
-                            style="border-radius: 50%; width: 48px; height: 48px; background: white; border: 1px solid #e0e0e0; cursor: pointer;">→</button>
+                <div class="carousel-header">
+                    <h2 class="scroll-reveal carousel-title">Fresh Listings</h2>
+                    <div class="carousel-controls">
+                        <button class="btn btn-icon carousel-btn" onclick="scrollCarousel('left')">←</button>
+                        <button class="btn btn-icon carousel-btn" onclick="scrollCarousel('right')">→</button>
                     </div>
                 </div>
 
                 <!-- Horizontal Scroll Container -->
-                <div id="product-carousel" class="scroll-reveal delay-200"
-                    style="display: flex; gap: 24px; overflow-x: auto; padding-bottom: 40px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;">
+                <div id="product-carousel" class="scroll-reveal delay-200 product-carousel">
                     <!-- Populated by JS -->
                 </div>
             </div>
         </section>
 
         <!-- Large footer CTA -->
-        <section style="padding: 140px 0; background: #1a1a1a; text-align: center;">
+        <section class="final-cta-section">
             <div class="container">
-                <h2 class="scroll-reveal"
-                    style="font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 800; color: white; margin-bottom: 32px; letter-spacing: -0.03em;">
+                <h2 class="scroll-reveal final-cta-title">
                     Ready to build different?
                 </h2>
-                <a href="signup.html" class="btn btn-primary btn-pill scroll-reveal delay-100"
-                    style="padding: 24px 64px; font-size: 1.25rem; display: inline-flex; width: fit-content;">
+                <a href="signup.html" class="btn btn-primary btn-pill final-cta-btn scroll-reveal delay-100">
                     Get Started for Free
                 </a>
             </div>

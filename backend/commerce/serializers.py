@@ -1,5 +1,8 @@
 from rest_framework import serializers
-from .models import Category, Product, ProductImage, Order, OrderItem, Cart, CartItem, Wishlist
+from .models import (
+    Category, Product, ProductImage, Order, OrderItem, Cart, CartItem, Wishlist,
+    Project, ProductAlert, AlertNotification, Kit, KitItem
+)
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -73,11 +76,12 @@ class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
     buyer_name = serializers.CharField(source='buyer.username', read_only=True)
     seller_name = serializers.CharField(source='seller.username', read_only=True)
+    project_name = serializers.CharField(source='project.name', read_only=True, allow_null=True)
     
     class Meta:
         model = Order
         fields = [
-            'id', 'buyer', 'buyer_name', 'seller', 'seller_name',
+            'id', 'buyer', 'buyer_name', 'seller', 'seller_name', 'project', 'project_name',
             'total_amount', 'tax_amount', 'delivery_method', 'delivery_status',
             'escrow_status', 'items', 'created_at', 'updated_at'
         ]
@@ -88,6 +92,7 @@ class OrderCreateSerializer(serializers.Serializer):
     """Serializer for creating orders with items."""
     seller = serializers.IntegerField()
     delivery_method = serializers.ChoiceField(choices=Order.DELIVERY_CHOICES)
+    project_id = serializers.IntegerField(required=False, allow_null=True)
     items = serializers.ListField(
         child=serializers.DictField(
             child=serializers.DecimalField(max_digits=10, decimal_places=2)
@@ -106,10 +111,19 @@ class OrderCreateSerializer(serializers.Serializer):
     def create(self, validated_data):
         """Create order with items."""
         from decimal import Decimal
+        from .models import Project
         
         items_data = validated_data.pop('items')
         buyer = self.context['request'].user
         seller_id = validated_data.pop('seller')
+        project_id = validated_data.pop('project_id', None)
+        
+        # Validate project belongs to buyer if provided
+        project = None
+        if project_id:
+            project = Project.objects.filter(id=project_id, buyer=buyer).first()
+            if not project:
+                raise serializers.ValidationError("Project not found or does not belong to buyer.")
         
         # Calculate totals
         total_amount = Decimal('0.00')
@@ -133,6 +147,7 @@ class OrderCreateSerializer(serializers.Serializer):
         order = Order.objects.create(
             buyer=buyer,
             seller_id=seller_id,
+            project=project,
             total_amount=total_amount,
             tax_amount=tax_amount,
             **validated_data
@@ -182,3 +197,83 @@ class WishlistSerializer(serializers.ModelSerializer):
         model = Wishlist
         fields = ['id', 'product', 'product_details', 'saved_at']
         read_only_fields = ['saved_at']
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+    total_spent = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    remaining_budget = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True, allow_null=True)
+    orders_count = serializers.IntegerField(source='orders.count', read_only=True)
+    
+    class Meta:
+        model = Project
+        fields = [
+            'id', 'buyer', 'name', 'description', 'budget', 'status',
+            'total_spent', 'remaining_budget', 'orders_count',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['buyer', 'created_at', 'updated_at']
+
+
+class ProductAlertSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True, allow_null=True)
+    
+    class Meta:
+        model = ProductAlert
+        fields = [
+            'id', 'user', 'name', 'category', 'category_name', 'keywords',
+            'max_price', 'condition', 'location_lat', 'location_long',
+            'location_name', 'radius_km', 'frequency', 'is_active',
+            'last_notified_at', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['user', 'last_notified_at', 'created_at', 'updated_at']
+
+
+class AlertNotificationSerializer(serializers.ModelSerializer):
+    product_details = ProductListSerializer(source='product', read_only=True)
+    
+    class Meta:
+        model = AlertNotification
+        fields = ['id', 'alert', 'product', 'product_details', 'sent_at', 'read_at']
+        read_only_fields = ['sent_at']
+
+
+class KitItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KitItem
+        fields = ['id', 'name', 'description', 'quantity', 'order']
+
+
+class KitSerializer(serializers.ModelSerializer):
+    items = KitItemSerializer(many=True, read_only=True)
+    is_active = serializers.BooleanField(read_only=True)
+    savings_percentage = serializers.IntegerField(read_only=True)
+    days_remaining = serializers.IntegerField(read_only=True)
+    
+    class Meta:
+        model = Kit
+        fields = [
+            'id', 'name', 'slug', 'description', 'short_description', 'kit_type',
+            'price', 'market_price', 'savings_percentage',
+            'quantity_available', 'max_quantity_per_order',
+            'start_date', 'end_date', 'status', 'is_active', 'days_remaining',
+            'source_description', 'specifications', 'primary_image',
+            'views', 'orders_count', 'items',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['views', 'orders_count', 'created_at', 'updated_at']
+
+
+class KitListSerializer(serializers.ModelSerializer):
+    """Lightweight serializer for kit listings."""
+    is_active = serializers.BooleanField(read_only=True)
+    savings_percentage = serializers.IntegerField(read_only=True)
+    days_remaining = serializers.IntegerField(read_only=True)
+    
+    class Meta:
+        model = Kit
+        fields = [
+            'id', 'name', 'slug', 'short_description', 'kit_type',
+            'price', 'market_price', 'savings_percentage',
+            'quantity_available', 'is_active', 'days_remaining',
+            'source_description', 'primary_image', 'start_date', 'end_date'
+        ]

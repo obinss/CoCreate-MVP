@@ -158,3 +158,454 @@
 .btn-pill:hover {
     transform: scale(1.05);
 }
+
+/* === Hero Section Styles === */
+.hero-section {
+    position: relative;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding-top: 80px;
+}
+
+.hero-content-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-content-center {
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Animated Badge */
+.animated-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    padding: 6px 16px 6px 6px;
+    border-radius: 100px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    margin-bottom: 32px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.badge-label {
+    background: #A6375F;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-text {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #666;
+}
+
+.badge-arrow {
+    color: #A6375F;
+}
+
+/* Hero Headlines */
+.hero-headline {
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: #1a1a1a;
+    margin-bottom: 32px;
+}
+
+.hero-headline-accent {
+    color: #A6375F;
+}
+
+.hero-subheadline {
+    font-size: 1.35rem;
+    color: #5f6368;
+    max-width: 600px;
+    margin: 0 auto 48px;
+    line-height: 1.6;
+}
+
+/* CTA Container */
+.cta-container {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-outline-white {
+    background: white;
+    border-color: #e0e0e0;
+    color: #1a1a1a;
+}
+
+/* Browser Mockup */
+.browser-mockup-wrapper {
+    margin-top: 80px;
+    position: relative;
+}
+
+.browser-mockup {
+    background: white;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.browser-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding-left: 8px;
+}
+
+.browser-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.browser-dot-red {
+    background: #ff5f56;
+}
+
+.browser-dot-yellow {
+    background: #ffbd2e;
+}
+
+.browser-dot-green {
+    background: #27c93f;
+}
+
+.browser-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    opacity: 0.8;
+}
+
+.browser-grid-item {
+    height: 180px;
+    background: #f0f0f0;
+    border-radius: 16px;
+}
+
+/* Floating Detail Card */
+.floating-detail-card {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    text-align: left;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translate(-50%, -20%);
+    }
+
+    50% {
+        transform: translate(-50%, -25%);
+    }
+}
+
+.detail-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.detail-card-icon {
+    width: 40px;
+    height: 40px;
+    background: #A6375F;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.detail-card-title {
+    font-weight: 700;
+}
+
+.detail-card-subtitle {
+    font-size: 0.8rem;
+    color: #10B981;
+}
+
+.detail-card-progress {
+    height: 6px;
+    background: #f0f0f0;
+    border-radius: 3px;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.detail-card-progress-fill {
+    width: 70%;
+    height: 100%;
+    background: #A6375F;
+    border-radius: 3px;
+}
+
+.detail-card-meta {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+/* Marquee Section */
+.marquee-section {
+    padding: 60px 0;
+    background: #fafafa;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.marquee-label {
+    text-align: center;
+    margin-bottom: 32px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #9aa0a6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Features Section */
+.features-section {
+    padding: 120px 0;
+    background: white;
+}
+
+.features-header {
+    max-width: 600px;
+    margin: 0 auto 80px;
+    text-align: center;
+}
+
+.features-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+}
+
+.features-description {
+    font-size: 1.2rem;
+    color: #5f6368;
+}
+
+/* Bento Card Specific Variants */
+.bento-card-primary {
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.bento-card-content {
+    max-width: 400px;
+}
+
+.bento-card-title-large {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+}
+
+.bento-card-text {
+    font-size: 1.1rem;
+    color: #5f6368;
+    margin-bottom: 32px;
+}
+
+.bento-card-image {
+    position: absolute;
+    right: -50px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 400px;
+    height: 400px;
+    background: url('https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800') center/cover;
+    border-radius: 24px;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.1);
+}
+
+.bento-card-speed {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.bento-card-stat {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.bento-card-stat-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.bento-card-stat-text {
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.bento-card-security {
+    height: 350px;
+}
+
+.bento-card-icon {
+    font-size: 3rem;
+    margin-bottom: 24px;
+}
+
+.bento-card-subtitle {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.bento-card-description {
+    color: #9aa0a6;
+    line-height: 1.6;
+}
+
+.bento-card-eco {
+    background: #e6f4ea;
+    border: none;
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.bento-eco-content {
+    padding-right: 40px;
+    flex: 1;
+}
+
+.eco-badge {
+    display: inline-block;
+    background: #ceead6;
+    color: #137333;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    margin-bottom: 16px;
+}
+
+.eco-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0d652d;
+    margin-bottom: 16px;
+}
+
+.eco-text {
+    color: #0d652d;
+    opacity: 0.8;
+}
+
+.eco-icon {
+    font-size: 8rem;
+    opacity: 0.2;
+    transform: rotate(15deg);
+}
+
+/* Product Carousel Section */
+.product-carousel-section {
+    padding: 100px 0;
+    background: #fafafa;
+    overflow: hidden;
+}
+
+.carousel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 48px;
+}
+
+.carousel-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: -0.02em;
+}
+
+.carousel-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.carousel-btn {
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    cursor: pointer;
+}
+
+.product-carousel {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    padding-bottom: 40px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+/* Final CTA Section */
+.final-cta-section {
+    padding: 140px 0;
+    background: #1a1a1a;
+    text-align: center;
+}
+
+.final-cta-title {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+    color: white;
+    margin-bottom: 32px;
+    letter-spacing: -0.03em;
+}
+
+.final-cta-btn {
+    padding: 24px 64px;
+    font-size: 1.25rem;
+    display: inline-flex;
+    width: fit-content;
+}

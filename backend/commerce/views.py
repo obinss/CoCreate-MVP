@@ -5,11 +5,17 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from .models import Category, Product, Order, Cart, CartItem, Wishlist
+from django.utils import timezone
+from .models import (
+    Category, Product, Order, Cart, CartItem, Wishlist,
+    Project, ProductAlert, AlertNotification, Kit, KitItem
+)
 from .serializers import (
     CategorySerializer, ProductSerializer, ProductListSerializer, 
     OrderSerializer, OrderCreateSerializer, CartSerializer, 
-    CartItemSerializer, WishlistSerializer
+    CartItemSerializer, WishlistSerializer,
+    ProjectSerializer, ProductAlertSerializer, AlertNotificationSerializer,
+    KitSerializer, KitListSerializer, KitItemSerializer
 )
 
 
@@ -35,7 +41,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         return ProductSerializer
     
     def perform_create(self, serializer):
-        serializer.save(seller=self.request.user)
+        product = serializer.save(seller=self.request.user)
+        # Check if this product matches any alerts
+        check_product_alerts(product)
     
     @action(detail=True, methods=['post'])
     def increment_views(self, request, pk=None):
@@ -201,3 +209,158 @@ class WishlistViewSet(viewsets.ModelViewSet):
         else:
             Wishlist.objects.create(user=request.user, product=product)
             return Response({'saved': True, 'message': 'Product added to wishlist'})
+
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    """API endpoint for buyer projects."""
+    serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Project.objects.filter(buyer=self.request.user).prefetch_related('orders')
+    
+    def perform_create(self, serializer):
+        serializer.save(buyer=self.request.user)
+
+
+class ProductAlertViewSet(viewsets.ModelViewSet):
+    """API endpoint for product alerts."""
+    serializer_class = ProductAlertSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return ProductAlert.objects.filter(user=self.request.user).select_related('category')
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    
+    @action(detail=True, methods=['post'])
+    def toggle_active(self, request, pk=None):
+        """Toggle alert active status."""
+        alert = self.get_object()
+        alert.is_active = not alert.is_active
+        alert.save()
+        return Response({'is_active': alert.is_active})
+    
+    @action(detail=False, methods=['get'])
+    def notifications(self, request):
+        """Get all notifications for user's alerts."""
+        alerts = ProductAlert.objects.filter(user=request.user, is_active=True)
+        notifications = AlertNotification.objects.filter(
+            alert__in=alerts
+        ).select_related('alert', 'product').order_by('-sent_at')
+        
+        serializer = AlertNotificationSerializer(notifications, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['post'])
+    def mark_read(self, request):
+        """Mark notifications as read."""
+        notification_ids = request.data.get('notification_ids', [])
+        AlertNotification.objects.filter(
+            id__in=notification_ids,
+            alert__user=request.user
+        ).update(read_at=timezone.now())
+        return Response({'message': 'Notifications marked as read'})
+
+
+class KitViewSet(viewsets.ModelViewSet):
+    """API endpoint for limited-time kits."""
+    queryset = Kit.objects.all().prefetch_related('items')
+    serializer_class = KitSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['kit_type', 'status']
+    search_fields = ['name', 'description', 'short_description']
+    ordering_fields = ['created_at', 'price', 'start_date', 'end_date']
+    ordering = ['-created_at']
+    
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return KitListSerializer
+        return KitSerializer
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        # Filter active kits for listing
+        if self.action == 'list':
+            now = timezone.now()
+            queryset = queryset.filter(
+                status='active',
+                start_date__lte=now,
+                end_date__gte=now,
+                quantity_available__gt=0
+            )
+        return queryset
+    
+    @action(detail=True, methods=['post'])
+    def increment_views(self, request, pk=None):
+        """Increment kit view count."""
+        kit = self.get_object()
+        kit.views += 1
+        kit.save(update_fields=['views'])
+        return Response({'views': kit.views})
+
+
+def check_product_alerts(product):
+    """Check if a newly created product matches any active alerts and create notifications."""
+    import math
+    
+    # Get all active alerts
+    alerts = ProductAlert.objects.filter(is_active=True)
+    
+    for alert in alerts:
+        matches = True
+        
+        # Check category
+        if alert.category and product.category != alert.category:
+            matches = False
+            continue
+        
+        # Check keywords
+        if alert.keywords:
+            keywords = [k.strip().lower() for k in alert.keywords.split(',')]
+            product_text = f"{product.title} {product.description}".lower()
+            if not any(keyword in product_text for keyword in keywords):
+                matches = False
+                continue
+        
+        # Check max price
+        if alert.max_price and product.price > alert.max_price:
+            matches = False
+            continue
+        
+        # Check condition
+        if alert.condition and product.condition != alert.condition:
+            matches = False
+            continue
+        
+        # Check location (within radius) using Haversine formula
+        if alert.location_lat and alert.location_long and product.location_lat and product.location_long:
+            # Convert to radians
+            lat1 = math.radians(float(alert.location_lat))
+            lat2 = math.radians(float(product.location_lat))
+            lon1 = math.radians(float(alert.location_long))
+            lon2 = math.radians(float(product.location_long))
+            
+            # Haversine formula
+            dlat = lat2 - lat1
+            dlon = lon2 - lon1
+            a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+            c = 2 * math.asin(math.sqrt(a))
+            distance_km = 6371 * c  # Earth radius in km
+            
+            if distance_km > alert.radius_km:
+                matches = False
+                continue
+        
+        # If matches, create notification
+        if matches:
+            AlertNotification.objects.get_or_create(
+                alert=alert,
+                product=product
+            )
+            
+            # Update last_notified_at if immediate frequency
+            if alert.frequency == 'immediate':
+                alert.last_notified_at = timezone.now()
+                alert.save(update_fields=['last_notified_at'])
