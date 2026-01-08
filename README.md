@@ -9,15 +9,15 @@ This is a **frontend prototype** demonstrating the complete user experience and 
 ## Features
 
 ### Core Functionality
-- ✅ User authentication (Buyer/Seller/Admin roles)
-- ✅ Product browsing with advanced filtering
-- ✅ Product detail pages with price comparison
-- ✅ Shopping cart and checkout flow
-- ✅ Seller dashboard with inventory management
-- ✅ Buyer dashboard with order tracking
-- ✅ Admin panel for user verification
-- ✅ Saved searches and watchlists
-- ✅ Fully responsive mobile design
+- User authentication (Buyer/Seller/Admin roles)
+- Product browsing with advanced filtering
+- Product detail pages with price comparison
+- Shopping cart and checkout flow
+- Seller dashboard with inventory management
+- Buyer dashboard with order tracking
+- Admin panel for user verification
+- Saved searches and watchlists
+- Fully responsive mobile design
 
 ### Design Features
 - Premium UI with Lisbon-Oriente color scheme
@@ -173,7 +173,7 @@ This prototype clearly marks integration points for backend implementation:
 
 ## License
 
-This is a prototype/MVP demonstration. All rights reserved.
+This is a prototype/MVP demonstration. 
 
 ## Contact
 
