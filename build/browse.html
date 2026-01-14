@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Materials - CoCreate</title>
+
+    <!-- Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="src/styles/index.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/mobile.css">
+    <link rel="stylesheet" href="src/styles/browse.css">
+</head>
+
+<body>
+    <!-- Navbar Placeholder -->
+    <div id="navbar-placeholder"></div>
+
+    <div class="container browse-container">
+        <!-- Active Filters Display -->
+        <div id="active-filters-container"></div>
+
+        <div class="browse-layout">
+            <!-- Filter Sidebar -->
+            <aside class="filter-sidebar">
+                <div class="card">
+                    <div class="filter-header">
+                        <h3>Filters</h3>
+                        <button class="btn btn-sm" id="clear-filters-btn">Clear All</button>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="input-group filter-search-group">
+                        <label class="input-label">Search</label>
+                        <input type="text" class="input" id="filter-search" placeholder="Search materials..." />
+                    </div>
+
+                    <!-- Category -->
+                    <div class="input-group">
+                        <label class="input-label">Category</label>
+                        <select class="input" id="filter-category">
+                            <option value="all">All Categories</option>
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+
+                    <!-- Condition -->
+                    <div class="input-group">
+                        <label class="input-label">Condition</label>
+                        <select class="input" id="filter-condition">
+                            <option value="all">All Conditions</option>
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+
+                    <!-- Price Range -->
+                    <div class="input-group">
+                        <label class="input-label">Price Range (€)</label>
+                        <div class="price-range-inputs">
+                            <input type="number" class="input" id="filter-min-price" placeholder="Min" />
+                            <input type="number" class="input" id="filter-max-price" placeholder="Max" />
+                        </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="input-group">
+                        <label class="input-label">Location</label>
+                        <input type="text" class="input" placeholder="Enter city..." value="Berlin" disabled />
+                        <input type="number" class="input location-radius-input" id="filter-radius"
+                            placeholder="Radius (km)" value="50" />
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Product Grid -->
+            <main>
+                <div class="results-header">
+                    <h2 id="results-count">Loading...</h2>
+                    <select class="input" id="sort-select">
+                        <option value="newest">Newest First</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="distance">Nearest First</option>
+                    </select>
+                </div>
+
+                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div id="no-results" class="hidden">
+                    <div class="card text-center no-results-card">
+                        <h3>No materials found</h3>
+                        <p>Try adjusting your filters or search criteria</p>
+                        <button class="btn no-results-action" id="clear-filters-action">
+                            Clear Filters
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="src/data/mockData.js"></script>
+    <script src="src/utils/utils.js"></script>
+    <script src="src/utils/icons.js"></script>
+    <script src="src/utils/SearchEngine.js"></script>
+    <script src="src/utils/ui.js"></script>
+    <script src="src/utils/loadComponents.js"></script>
+
+    <!-- We need AppState but don't want the old app router taking over. 
+         Ideally we refactor app.js. For now, we'll initialize state manually in browse.js or assume app.js is fixed.
+         Let's rely on browse.js to do the heavy lifting.
+    -->
+    <script src="src/browse.js"></script>
+</body>
+
+</html>

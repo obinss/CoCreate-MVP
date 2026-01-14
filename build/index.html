@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoCreate - Construction Materials Marketplace</title>
+    <meta name="description"
+        content="B2B2C marketplace connecting contractors with excess inventory to SMEs, tradespeople, and DIYers.">
+
+    <!-- Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="src/styles/index.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/mobile.css">
+    <link rel="stylesheet" href="src/styles/home.css">
+    <link rel="stylesheet" href="src/styles/product-modal.css">
+    <link rel="stylesheet" href="src/styles/faq-section.css">
+</head>
+
+<body>
+    <!-- Navbar Placeholder -->
+    <div id="navbar-placeholder"></div>
+
+    <main>
+        <!-- New Hero Section -->
+        <section class="hero-section">
+            <!-- Background Blobs -->
+            <div class="hero-blob" style="top: -10%; right: -5%; width: 600px; height: 600px; background: #e9f5db;">
+            </div>
+            <div class="hero-blob"
+                style="bottom: 0%; left: -10%; width: 500px; height: 500px; background: #d8f3dc; animation-delay: -5s;">
+            </div>
+
+            <div class="container hero-content-wrapper">
+                <div class="hero-content-center">
+                    <!-- Animated Badge -->
+                    <div class="scroll-reveal animated-badge">
+                        <span class="badge-label">NEW</span>
+                        <span class="badge-text">CoCreate for Enterprises is here</span>
+                        <span class="badge-arrow">→</span>
+                    </div>
+
+                    <!-- Massive Headline -->
+                    <h1 class="scroll-reveal delay-100 hero-headline">
+                        The sustainable<br>
+                        <span class="hero-headline-accent">material marketplace.</span>
+                    </h1>
+
+                    <!-- Subhead -->
+                    <p class="scroll-reveal delay-200 hero-subheadline">
+                        Connect contractors with surplus inventory. Reduce waste, save money, and build better.
+                    </p>
+
+                    <!-- CTAs -->
+                    <div class="scroll-reveal delay-300 cta-container">
+                        <a href="browse.html" class="btn btn-primary btn-pill">
+                            Explore Marketplace
+                        </a>
+                        <a href="signup.html" class="btn btn-outline btn-outline-white btn-pill">
+                            Become a Seller
+                        </a>
+                    </div>
+
+                    <!-- Hero UI Interactive Demo Preview -->
+                    <div class="scroll-reveal delay-300 browser-mockup-wrapper">
+                        <div class="browser-mockup">
+                            <!-- Fake Browser Nav -->
+                            <div class="browser-nav">
+                                <div class="browser-dot browser-dot-red"></div>
+                                <div class="browser-dot browser-dot-yellow"></div>
+                                <div class="browser-dot browser-dot-green"></div>
+                            </div>
+                            <!-- Mock UI Grid -->
+                            <div class="browser-grid">
+                                <div class="browser-grid-item"></div>
+                                <div class="browser-grid-item"></div>
+                                <div class="browser-grid-item"></div>
+                                <div class="browser-grid-item"></div>
+                            </div>
+                            <!-- Hovering Detail Card Animation -->
+                            <div class="floating-detail-card">
+                                <div class="detail-card-header">
+                                    <div class="detail-card-icon">
+                                        <i class="fas fa-building"></i>
+                                    </div>
+                                    <div>
+                                        <div class="detail-card-title">Red Bricks</div>
+                                        <div class="detail-card-subtitle">Save 45% vs retail</div>
+                                    </div>
+                                </div>
+                                <div class="detail-card-progress">
+                                    <div class="detail-card-progress-fill"></div>
+                                </div>
+                                <div class="detail-card-meta">Only 12 pallets left</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Infinite Marquee Section -->
+        <section class="marquee-section">
+            <div class="marquee-label">Trusted Categories</div>
+            <div class="marquee-container">
+                <div class="marquee-content" id="marquee-content-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Bento Grid Features Section -->
+        <section class="features-section">
+            <div class="container">
+                <div class="features-header">
+                    <h2 class="scroll-reveal features-title">
+                        Why CoCreate?
+                    </h2>
+                    <p class="scroll-reveal delay-100 features-description">
+                        Built for the modern contractor. Streamlined, secure, and sustainable.
+                    </p>
+                </div>
+
+                <div class="bento-grid">
+                    <!-- Card 1: Large Primary -->
+                    <div class="bento-card col-span-8 bento-light bento-card-primary scroll-reveal delay-100">
+                        <div class="bento-card-content">
+                            <h3 class="bento-card-title-large">
+                                Save up to 60% on materials.</h3>
+                            <p class="bento-card-text">Every listing is priced
+                                to sell. Find high-quality surplus from verified professional job sites.</p>
+                            <a href="browse.html" class="btn btn-primary btn-pill">Start
+                                Saving</a>
+                        </div>
+                        <div class="bento-card-image"></div>
+                    </div>
+
+                    <!-- Card 2: Speed Stats -->
+                    <div class="bento-card col-span-4 bento-primary bento-card-speed scroll-reveal delay-200">
+                        <div>
+                            <div class="bento-card-stat">24h</div>
+                            <h3 class="bento-card-stat-title">Fast Pickup</h3>
+                        </div>
+                        <p class="bento-card-stat-text">Most materials are ready for pickup within 24 hours
+                            of purchase.</p>
+                    </div>
+
+                    <!-- Card 3: Security -->
+                    <div class="bento-card col-span-4 bento-dark bento-card-security scroll-reveal delay-100">
+                        <div class="bento-card-icon"><i class="fas fa-shield-halved"></i></div>
+                        <h3 class="bento-card-subtitle">Escrow Secure</h3>
+                        <p class="bento-card-description">Payments are held safely until you verify the goods
+                            manually. No risk, just trust.</p>
+                    </div>
+
+                    <!-- Card 4: Eco Impact -->
+                    <div class="bento-card col-span-8 bento-card-eco scroll-reveal delay-200">
+                        <div class="bento-eco-content">
+                            <div class="eco-badge">ECO-FRIENDLY</div>
+                            <h3 class="eco-title">Zero Waste Goal</h3>
+                            <p class="eco-text">Join our mission to divert 10,000 tons of
+                                construction waste from landfills by 2026.</p>
+                        </div>
+                        <div class="eco-icon"><i class="fas fa-seedling"></i></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Carousel Section (Scroll Snap) -->
+        <section class="product-carousel-section">
+            <div class="container">
+                <div class="carousel-header">
+                    <h2 class="scroll-reveal carousel-title">Fresh Listings</h2>
+                    <div class="carousel-controls">
+                        <button class="btn btn-icon carousel-btn" onclick="scrollCarousel('left')">←</button>
+                        <button class="btn btn-icon carousel-btn" onclick="scrollCarousel('right')">→</button>
+                    </div>
+                </div>
+
+                <!-- Horizontal Scroll Container -->
+                <div id="product-carousel" class="scroll-reveal delay-200 product-carousel">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Large footer CTA -->
+        <section class="final-cta-section">
+            <div class="container">
+                <h2 class="scroll-reveal final-cta-title">
+                    Ready to build different?
+                </h2>
+                <a href="signup.html" class="btn btn-primary btn-pill final-cta-btn scroll-reveal delay-100">
+                    Get Started for Free
+                </a>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <div class="faq-container">
+                    <div class="faq-header scroll-reveal">
+                        <h2 class="faq-title">Frequently Asked Questions</h2>
+                        <p class="faq-subtitle">Find answers to common questions about buying and selling construction
+                            materials on CoCreate.</p>
+                    </div>
+
+                    <div class="faq-list">
+                        <!-- FAQ 1 -->
+                        <div class="faq-item scroll-reveal delay-100">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <div class="faq-question-text">
+                                    <div class="faq-icon">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                    <h3 class="faq-question-title">How much can I save on materials?</h3>
+                                </div>
+                                <div class="faq-toggle">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    <p>On average, buyers save 40-60% compared to retail prices. All materials are
+                                        priced below market value because they come from surplus inventory. The exact
+                                        savings depend on the material type and quantity available.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 2 -->
+                        <div class="faq-item scroll-reveal delay-100">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <div class="faq-question-text">
+                                    <div class="faq-icon">
+                                        <i class="fas fa-truck"></i>
+                                    </div>
+                                    <h3 class="faq-question-title">How does delivery work?</h3>
+                                </div>
+                                <div class="faq-toggle">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    <p>Most materials are available for pickup within 24 hours of purchase. Sellers list
+                                        their location, and you coordinate pickup directly. Delivery is available for
+                                        larger orders at an additional cost, arranged between buyer and seller.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 3 -->
+                        <div class="faq-item scroll-reveal delay-200">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <div class="faq-question-text">
+                                    <div class="faq-icon">
+                                        <i class="fas fa-shield-halved"></i>
+                                    </div>
+                                    <h3 class="faq-question-title">How do you ensure material quality?</h3>
+                                </div>
+                                <div class="faq-toggle">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    <p>All materials come from verified construction companies and professional job
+                                        sites. Sellers must provide detailed descriptions and photos. Payments are held
+                                        in escrow until you verify the materials meet your expectations.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 4 -->
+                        <div class="faq-item scroll-reveal delay-200">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <div class="faq-question-text">
+                                    <div class="faq-icon">
+                                        <i class="fas fa-user-check"></i>
+                                    </div>
+                                    <h3 class="faq-question-title">How do sellers get verified?</h3>
+                                </div>
+                                <div class="faq-toggle">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    <p>Sellers submit business documentation and undergo a verification process. We
+                                        check company registration, insurance, and references. Only verified sellers can
+                                        list materials on the platform.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 5 -->
+                        <div class="faq-item scroll-reveal delay-300">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <div class="faq-question-text">
+                                    <div class="faq-icon">
+                                        <i class="fas fa-seedling"></i>
+                                    </div>
+                                    <h3 class="faq-question-title">How does this help the environment?</h3>
+                                </div>
+                                <div class="faq-toggle">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    <p>By reselling surplus materials, we prevent them from ending up in landfills.
+                                        Every purchase diverts construction waste from disposal and reduces demand for
+                                        new material production, lowering overall environmental impact.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 6 -->
+                        <div class="faq-item scroll-reveal delay-300">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <div class="faq-question-text">
+                                    <div class="faq-icon">
+                                        <i class="fas fa-credit-card"></i>
+                                    </div>
+                                    <h3 class="faq-question-title">What payment methods do you accept?</h3>
+                                </div>
+                                <div class="faq-toggle">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    <p>We accept all major credit cards, debit cards, and bank transfers. All payments
+                                        are processed securely and held in escrow until you confirm receipt of
+                                        materials.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 7 -->
+                        <div class="faq-item scroll-reveal delay-400">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <div class="faq-question-text">
+                                    <div class="faq-icon">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                    <h3 class="faq-question-title">How quickly can I pick up materials?</h3>
+                                </div>
+                                <div class="faq-toggle">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    <p>Most materials can be picked up within 24 hours of purchase. The seller's listing
+                                        will show availability. You'll coordinate directly with the seller to schedule
+                                        pickup at a convenient time.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 8 -->
+                        <div class="faq-item scroll-reveal delay-400">
+                            <button class="faq-question" onclick="toggleFAQ(this)">
+                                <div class="faq-question-text">
+                                    <div class="faq-icon">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <h3 class="faq-question-title">Can I be both a buyer and seller?</h3>
+                                </div>
+                                <div class="faq-toggle">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </button>
+                            <div class="faq-answer">
+                                <div class="faq-answer-content">
+                                    <p>Yes! Once you create an account, you can browse and purchase materials
+                                        immediately. To sell, you'll need to complete the seller verification process,
+                                        which typically takes 1-2 business days.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="src/data/mockData.js"></script>
+    <script src="src/utils/utils.js"></script>
+    <script src="src/utils/icons.js"></script>
+    <script src="src/utils/loadComponents.js"></script>
+    <!-- API Layer -->
+    <script src="src/api/config.js"></script>
+    <script src="src/api/index.js"></script>
+    <!-- Services -->
+    <script src="src/services/additional/search.js"></script>
+    <script src="src/services/commerce/products.js"></script>
+    <script src="src/services/commerce/customer.js"></script>
+    <script src="src/services/commerce/orders.js"></script>
+    <script src="src/services/commerce/cart.js"></script>
+    <!-- FAQ Script -->
+    <script src="src/scripts/faq.js"></script>
+    <!-- Product Modal -->
+    <script src="src/scripts/product-modal.js"></script>
+    <!-- Pages -->
+    <script src="src/pages/Home.page.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CoCreate</title>
+
+    <!-- Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="src/styles/index.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/pages.css">
+    <link rel="stylesheet" href="src/styles/mobile.css">
+    <style>
+        .admin-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .admin-header {
+            margin-bottom: 2rem;
+        }
+
+        .admin-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .admin-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            margin-bottom: -2px;
+        }
+
+        .admin-tab:hover {
+            color: var(--primary-color);
+        }
+
+        .admin-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card-label {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card-change {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .stat-card-change.positive {
+            color: var(--color-success);
+        }
+
+        .stat-card-change.negative {
+            color: var(--color-error);
+        }
+
+        .admin-table-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th {
+            text-align: left;
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .admin-table tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+        }
+
+        .status-approved {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon.approve {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .btn-icon.approve:hover {
+            background: var(--color-success);
+            color: white;
+        }
+
+        .btn-icon.reject {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+        }
+
+        .btn-icon.reject:hover {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .btn-icon.delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+        }
+
+        .btn-icon.delete:hover {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar select,
+        .filter-bar input {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-tertiary);
+            padding: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .dispute-details {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .dispute-details h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .dispute-evidence {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <div class="admin-container section">
+        <div class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <p class="text-tertiary">Manage platform users, products, and orders</p>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-card-value" id="total-users">0</div>
+                        <div class="stat-card-label">Total Users</div>
+                    </div>
+                    <div class="stat-card-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-card-change positive">
+                    <i class="fas fa-arrow-up"></i> +12% this month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-card-value" id="total-products">0</div>
+                        <div class="stat-card-label">Active Products</div>
+                    </div>
+                    <div class="stat-card-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                        <i class="fas fa-box"></i>
+                    </div>
+                </div>
+                <div class="stat-card-change positive">
+                    <i class="fas fa-arrow-up"></i> +8% this month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-card-value" id="total-orders">0</div>
+                        <div class="stat-card-label">Total Orders</div>
+                    </div>
+                    <div class="stat-card-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                </div>
+                <div class="stat-card-change positive">
+                    <i class="fas fa-arrow-up"></i> +15% this month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-card-value" id="pending-verifications">0</div>
+                        <div class="stat-card-label">Pending Verifications</div>
+                    </div>
+                    <div class="stat-card-icon" style="background: linear-gradient(135deg, #fa709a, #fee140);">
+                        <i class="fas fa-user-check"></i>
+                    </div>
+                </div>
+                <div class="stat-card-change">
+                    Requires attention
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <div class="stat-card-value" id="total-revenue">€0</div>
+                        <div class="stat-card-label">Platform Revenue</div>
+                    </div>
+                    <div class="stat-card-icon" style="background: linear-gradient(135deg, #30cfd0, #330867);">
+                        <i class="fas fa-euro-sign"></i>
+                    </div>
+                </div>
+                <div class="stat-card-change positive">
+                    <i class="fas fa-arrow-up"></i> +22% this month
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Tabs -->
+        <div class="admin-tabs">
+            <button class="admin-tab active" onclick="switchTab('users')">
+                <i class="fas fa-users"></i> Users
+            </button>
+            <button class="admin-tab" onclick="switchTab('sellers')">
+                <i class="fas fa-store"></i> Seller Verifications
+            </button>
+            <button class="admin-tab" onclick="switchTab('products')">
+                <i class="fas fa-box"></i> Products
+            </button>
+            <button class="admin-tab" onclick="switchTab('orders')">
+                <i class="fas fa-shopping-cart"></i> Orders
+            </button>
+            <button class="admin-tab" onclick="switchTab('kits')">
+                <i class="fas fa-gift"></i> Kits
+            </button>
+            <button class="admin-tab" onclick="switchTab('flags')">
+                <i class="fas fa-flag"></i> Flags <span class="badge badge-warning" id="flags-badge"
+                    style="margin-left: 0.5rem;">0</span>
+            </button>
+            <button class="admin-tab" onclick="switchTab('disputes')">
+                <i class="fas fa-gavel"></i> Disputes <span class="badge badge-error" id="disputes-badge"
+                    style="margin-left: 0.5rem;">0</span>
+            </button>
+            <button class="admin-tab" onclick="switchTab('reports')">
+                <i class="fas fa-chart-bar"></i> Reports
+            </button>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="tab-users" class="admin-content active">
+            <div class="admin-table-container">
+                <div class="filter-bar">
+                    <input type="text" class="search-box" placeholder="Search users..." id="user-search">
+                    <select id="user-role-filter">
+                        <option value="">All Roles</option>
+                        <option value="buyer">Buyer</option>
+                        <option value="seller">Seller</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <!-- Users will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Seller Verifications Tab -->
+        <div id="tab-sellers" class="admin-content">
+            <div class="admin-table-container">
+                <div class="filter-bar">
+                    <select id="seller-status-filter">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Business Name</th>
+                            <th>User</th>
+                            <th>Tax ID</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sellers-table-body">
+                        <!-- Sellers will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Products Tab -->
+        <div id="tab-products" class="admin-content">
+            <div class="admin-table-container">
+                <div class="filter-bar">
+                    <input type="text" class="search-box" placeholder="Search products..." id="product-search">
+                    <select id="product-status-filter">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="sold">Sold</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Seller</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-table-body">
+                        <!-- Products will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="tab-orders" class="admin-content">
+            <div class="admin-table-container">
+                <div class="filter-bar">
+                    <input type="text" class="search-box" placeholder="Search orders..." id="order-search">
+                    <select id="order-status-filter">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Buyer</th>
+                            <th>Seller</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body">
+                        <!-- Orders will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Kits Tab -->
+        <div id="tab-kits" class="admin-content">
+            <div class="admin-table-container">
+                <div class="filter-bar" style="justify-content: space-between;">
+                    <div style="display: flex; gap: 1rem;">
+                        <select id="kit-status-filter">
+                            <option value="">All Status</option>
+                            <option value="upcoming">Upcoming</option>
+                            <option value="active">Active</option>
+                            <option value="sold_out">Sold Out</option>
+                            <option value="ended">Ended</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="openCreateKitModal()">
+                        <i class="fas fa-plus"></i> Create New Kit
+                    </button>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Kit Title</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                            <th>Available</th>
+                            <th>Status</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kits-table-body">
+                        <!-- Kits will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Flags Tab -->
+        <div id="tab-flags" class="admin-content">
+            <div class="admin-table-container">
+                <div class="filter-bar">
+                    <select id="flag-status-filter">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending Review</option>
+                        <option value="reviewing">Under Review</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="dismissed">Dismissed</option>
+                    </select>
+                    <select id="flag-type-filter">
+                        <option value="">All Types</option>
+                        <option value="product">Product Listing</option>
+                        <option value="order">Order/Sale</option>
+                        <option value="user">User Account</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Flag ID</th>
+                            <th>Type</th>
+                            <th>Reason</th>
+                            <th>Flagged By</th>
+                            <th>Target</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="flags-table-body">
+                        <!-- Flags will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Disputes Tab -->
+        <div id="tab-disputes" class="admin-content">
+            <div class="admin-table-container">
+                <div class="filter-bar">
+                    <select id="dispute-status-filter">
+                        <option value="">All Status</option>
+                        <option value="open">Open</option>
+                        <option value="under_review">Under Review</option>
+                        <option value="buyer_favored">Buyer Favored</option>
+                        <option value="seller_favored">Seller Favored</option>
+                        <option value="partial_refund">Partial Refund</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                </div>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Dispute ID</th>
+                            <th>Order ID</th>
+                            <th>Raised By</th>
+                            <th>Reason</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="disputes-table-body">
+                        <!-- Disputes will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="tab-reports" class="admin-content">
+            <div class="admin-table-container">
+                <h2 style="margin-bottom: 1.5rem;">Platform Analytics</h2>
+                <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div class="stat-card">
+                        <div class="stat-card-label">Monthly Active Users</div>
+                        <div class="stat-card-value">1,234</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">Total GMV</div>
+                        <div class="stat-card-value">€125,430</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">Average Order Value</div>
+                        <div class="stat-card-value">€245</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">Conversion Rate</div>
+                        <div class="stat-card-value">3.2%</div>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">Recent Activity</h3>
+                    <p class="text-tertiary">Analytics dashboard coming soon...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="src/utils/utils.js"></script>
+    <script src="src/utils/loadComponents.js"></script>
+    <script src="src/data/mockData.js"></script>
+    <script src="src/api/config.js"></script>
+    <script src="src/scripts/admin.js"></script>
+</body>
+
+</html>

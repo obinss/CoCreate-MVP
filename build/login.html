@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CoCreate</title>
+
+    <!-- Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="src/styles/index.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+    <link rel="stylesheet" href="src/styles/mobile.css">
+    <link rel="stylesheet" href="src/styles/auth.css">
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+
+    <div class="container section">
+        <div class="auth-container">
+            <div class="card auth-card">
+                <h1 class="text-center auth-header">Welcome Back</h1>
+                <p class="text-center text-secondary auth-subheader">
+                    Log in to continue to CoCreate
+                </p>
+
+                <form id="login-form">
+                    <div class="input-group">
+                        <label class="input-label" for="login-email">Email Address</label>
+                        <input type="email" class="input" id="login-email" name="email"
+                            placeholder="your.email@example.com" required autocomplete="email" />
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="login-password">Password</label>
+                        <input type="password" class="input" id="login-password" name="password"
+                            placeholder="Enter your password" required autocomplete="current-password" />
+                    </div>
+
+                    <div class="checkbox-group auth-checkbox-group">
+                        <input type="checkbox" class="checkbox" id="remember-me" />
+                        <label for="remember-me">Remember me</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary auth-submit-btn">
+                        Log In
+                    </button>
+                </form>
+
+                <div class="auth-divider">
+                    <p class="text-secondary">
+                        Don't have an account?
+                        <a href="signup.html">Sign up</a>
+                    </p>
+                </div>
+
+                <div class="alert alert-info auth-demo-info">
+                    <strong>Demo Accounts:</strong><br />
+                    <small>
+                        Buyer: john.buyer@example.com<br />
+                        Seller: maria.contractor@example.com<br />
+                        Admin: admin@cocreate.com<br />
+                        Password: (any password works)
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Container -->
+    <div id="notifications"></div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="src/data/mockData.js"></script>
+    <script src="src/utils/utils.js"></script>
+    <script src="src/utils/loadComponents.js"></script>
+    <script src="src/pages/Login.page.js"></script>
+</body>
+
+</html>
